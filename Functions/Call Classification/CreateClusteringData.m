@@ -79,5 +79,8 @@ for j = 1:length(fileName)
         fprintf(1, 'Skipping empty file: %s\n', fileName{j})
     end
 end
+
+ClusteringData = cell2table(ClusteringData, 'VariableNames', {'Spectrogram', 'MinFreq', 'Duration', 'xFreq', 'xTime', 'Filename', 'callID', 'Power', 'Bandwidth'});
+
 close(h)
 end

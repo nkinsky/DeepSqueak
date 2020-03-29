@@ -3,7 +3,7 @@ function UpdateCluster(ClusteringData, clustAssign, clusterName, rejected)
 
 h = waitbar(0,'Initializing');
 
-[files, ~, file_idx] = unique(ClusteringData(:,6),'stable');
+[files, ~, file_idx] = unique(ClusteringData.Filename,'stable');
 
 % Merge "Noise" and "noise"
 clusterName = mergecats(clusterName, {'Noise', 'noise'});
@@ -28,7 +28,7 @@ for i = 1:length(files)
     cluster_idx = find(file_idx == i);
     
     % Find the index of the calls in the file that correspond the the clustering data
-    call_idx = [ClusteringData{cluster_idx, 7}];
+    call_idx = ClusteringData.callID(cluster_idx);
 
     % Update call type with cluster names
     Calls.Type(call_idx) = clustAssign(cluster_idx);

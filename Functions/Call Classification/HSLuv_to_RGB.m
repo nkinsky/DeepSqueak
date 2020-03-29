@@ -145,8 +145,8 @@ XYZ = XYZ .* whitePoint;
 RGB = XYZ * T';
 
 %% Clamp RGB Between 0 and 1 and apply gamma
-RGB = max(RGB,0);
 RGB = gammaFcn(RGB);
+RGB = max(RGB,0);
 RGB = min(RGB,1);
 
 %% Plot the output

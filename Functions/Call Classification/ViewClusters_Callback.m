@@ -1,5 +1,5 @@
 function ViewClusters_Callback(hObject, eventdata, handles)
-[ClusteringData,clustAssign] = CreateClusteringData(handles.data, 0);
+[ClusteringData, clustAssign] = CreateClusteringData(handles.data, 0);
 
 [clusterName, rejected, finished] = clusteringGUI(clustAssign, ClusteringData,1);
 

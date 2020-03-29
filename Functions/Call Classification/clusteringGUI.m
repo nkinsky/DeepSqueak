@@ -7,9 +7,9 @@ ClusteringData = ClusteringData1;
 
 rejected = zeros(1,length(clustAssign));
 
-minfreq = floor(min([ClusteringData{:,2}]))-1;
-maxfreq = ceil(max([ClusteringData{:,2}] + [ClusteringData{:,9}]));
-mfreq = cellfun(@mean,(ClusteringData(:,4)));
+minfreq = floor(min(ClusteringData.MinFreq))-1;
+maxfreq = ceil(max(ClusteringData.MinFreq + ClusteringData.Bandwidth));
+mfreq = cellfun(@mean,ClusteringData.xFreq);
 ColorData = jet(maxfreq - minfreq); % Color by mean frequency
 if iscategorical(clustAssign)
     clusterName =unique(clustAssign);
@@ -143,8 +143,8 @@ pos = flipud(pos);
 for i=1:i*j
     if i <= length(clustIndex) - (page - 1)*length(ha)
         
-        im = imresize(ClusteringData{clustIndex(i),1},[60 100]);
-        freqdata = round(linspace(ClusteringData{clustIndex(i),2} + ClusteringData{clustIndex(i),9},ClusteringData{clustIndex(i),2},60));
+        im = imresize(ClusteringData.Spectrogram{clustIndex(i)},[60 100]);
+        freqdata = round(linspace(ClusteringData.MinFreq(clustIndex(i)) + ClusteringData.Bandwidth(clustIndex(i)), ClusteringData.MinFreq(clustIndex(i)), 60));
         colorIM(:,:,1) =  single(im).*.0039.*ColorData(freqdata - minfreq,1);
         colorIM(:,:,2) =  single(im).*.0039.*ColorData(freqdata - minfreq,2);
         colorIM(:,:,3) =  single(im).*.0039.*ColorData(freqdata - minfreq,3);
@@ -217,8 +217,8 @@ for i=1:length(ha)
         set(ha(i),'Visible','off')
         set(get(ha(i),'children'),'Visible','on');
         callID = i + (page - 1)*length(ha);
-        im = imresize(ClusteringData{clustIndex(callID),1},[60 100]);
-        freqdata = round(linspace(ClusteringData{clustIndex(callID),2} + ClusteringData{clustIndex(callID),9},ClusteringData{clustIndex(callID),2},60));
+        im = imresize(ClusteringData.Spectrogram{clustIndex(callID)}, [60 100]);
+        freqdata = round(linspace(ClusteringData.MinFreq(clustIndex(callID)) + ClusteringData.Bandwidth(clustIndex(callID)), ClusteringData.MinFreq(clustIndex(callID)), 60));
         colorIM(:,:,1) =  single(im).*.0039.*ColorData(freqdata - minfreq,1);
         colorIM(:,:,2) =  single(im).*.0039.*ColorData(freqdata - minfreq,2);
         colorIM(:,:,3) =  single(im).*.0039.*ColorData(freqdata - minfreq,3);
@@ -242,8 +242,8 @@ end
 function clicked(hObject,eventdata,i,plotI)
 global k clustAssign clusters rejected ClusteringData minfreq d ha ColorData handle_image
 rejected(i) = ~rejected(i);
-im = imresize(ClusteringData{i,1},[60 100]);
-freqdata = round(linspace(ClusteringData{i,2} + ClusteringData{i,9},ClusteringData{i,2},60));
+im = imresize(ClusteringData.Spectrogram{i},[60 100]);
+freqdata = round(linspace(ClusteringData.MinFreq(i) + ClusteringData.Bandwidth(i), ClusteringData.MinFreq(i), 60));
 colorIM(:,:,1) =  single(im).*.0039.*ColorData(freqdata - minfreq,1);
 colorIM(:,:,2) =  single(im).*.0039.*ColorData(freqdata - minfreq,2);
 colorIM(:,:,3) =  single(im).*.0039.*ColorData(freqdata - minfreq,3);
