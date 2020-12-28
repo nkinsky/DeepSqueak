@@ -2,7 +2,7 @@ function UnsupervisedClustering_Callback(hObject, eventdata, handles)
 % Cluster with k-means or adaptive
 
 % Get the data
-[ClusteringData] = CreateClusteringData(handles.data, 1);
+ClusteringData = CreateClusteringData(handles.data, 1);
 if isempty(ClusteringData); return; end
 
 [FileName,PathName] = uiputfile('Extracted Contours.mat','Save contours for faster loading');
@@ -27,14 +27,13 @@ while ~finished
             %             data = [data{:}]';
             
             % Parameterized data
-            nrm = @(x) ((x - mean(x,1)) ./ std(x,1));
-            ReshapedX=cell2mat(cellfun(@(x) imresize(x',[1 9]) ,ClusteringData(:,4),'UniformOutput',0));
-            slope = diff(ReshapedX,1,2);
-            slope = nrm(slope);
-            freq=cell2mat(cellfun(@(x) imresize(x',[1 8]) ,ClusteringData(:,4),'UniformOutput',0));
-            freq = nrm(freq);
-            duration = repmat(cell2mat(ClusteringData(:,3)),[1 8]);
-            duration = nrm(duration);
+            ReshapedX   = cell2mat(cellfun(@(x) imresize(x',[1 9]) ,ClusteringData.xFreq,'UniformOutput',0));
+            slope       = diff(ReshapedX,1,2);
+            slope       = zscore(slope);
+            freq        = cell2mat(cellfun(@(x) imresize(x',[1 8]) ,ClusteringData.xFreq,'UniformOutput',0));
+            freq        = zscore(freq);
+            duration    = repmat(ClusteringData.Duration,[1 8]);
+            duration    = zscore(duration);
             
             close(hb)
             FromExisting = questdlg('From existing model?','Cluster','Yes','No','No');
@@ -95,18 +94,15 @@ while ~finished
             %% Make a montage with the top calls in each class
             try
                 % Find the median call length
-                maxlength = [];
-                for i = unique(clustAssign,'sorted')'
-                    index = find(clustAssign==i,1);
-                    im = ClusteringData{index,1};
-                    maxlength = [maxlength,size(im,2)];
-                end
+                [~, i] = unique(clustAssign,'sorted');
+                maxlength = cellfun(@(callSpectrogram) size(callSpectrogram,2), ClusteringData.Spectrogram(i));
                 maxlength = round(prctile(maxlength,75));
+                
                 % Make the image stack
                 montageI = [];
                 for i = unique(clustAssign)'
                     index = find(clustAssign==i,1);
-                    tmp = ClusteringData{index,1};
+                    tmp = ClusteringData.Spectrogram{index,1};
                     tmp = padarray(tmp,[0,max(maxlength-size(tmp,2),0)],'both');
                     tmp = rescale(tmp,1,100);
                     montageI(:,:,i) = floor(imresize(tmp,[120,240]));
@@ -135,7 +131,7 @@ while ~finished
                     end
                     %% Cluster
                     try
-                        [ARTnet, clustAssign] = ARTwarp2(ClusteringData(:,4),settings);
+                        [ARTnet, clustAssign] = ARTwarp2(ClusteringData.xFreq,settings);
                     catch ME
                         disp(ME)
                     end
@@ -149,7 +145,7 @@ while ~finished
                     end
                     
             end
-            [clustAssign] = GetARTwarpClusters(ClusteringData(:,4),ARTnet,settings);
+            [clustAssign] = GetARTwarpClusters(ClusteringData.xFreq,ARTnet,settings);
     end
     
     %     data = freq;

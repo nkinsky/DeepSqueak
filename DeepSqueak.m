@@ -105,7 +105,7 @@ if ~isdeployed
     end
     
     try
-        verLessThan('distcomp','1');
+        verLessThan('parallel','1');
     catch
         warning('Parallel Computing Toolbox not found')
     end
@@ -395,11 +395,14 @@ end
 % --- Executes on button press in rectangle.
 function rectangle_Callback(hObject, eventdata, handles)
 % Re-draw the box
-fcn = makeConstrainToRectFcn('imrect',[handles.spect.XData(1),handles.spect.XData(end)],[handles.spect.YData(1),handles.spect.YData(end)]); %constrain to edges of window
-newbox=imrect(handles.axes1,'PositionConstraintFcn',fcn);
-handles.pos=getPosition(newbox);
-difference = handles.pos - handles.data.calls{handles.data.currentcall, 'RelBox'};
-handles.data.calls{handles.data.currentcall, 'RelBox'} = difference + handles.data.calls{handles.data.currentcall, 'RelBox'};
+newbox = drawrectangle(handles.axes1);
+% don't do anything if the box has zero height or width
+if any(newbox.Position(3:4) == 0) 
+    delete(newbox);
+    return
+end
+difference = newbox.Position - handles.data.calls{handles.data.currentcall, 'RelBox'};
+handles.data.calls{handles.data.currentcall, 'RelBox'} = newbox.Position;
 handles.data.calls{handles.data.currentcall, 'Box'} = difference + handles.data.calls{handles.data.currentcall, 'Box'};
 delete(newbox);
 update_fig(hObject, eventdata, handles);

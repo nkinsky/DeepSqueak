@@ -1,5 +1,21 @@
-function [I,windowsize,noverlap,nfft,rate,box,s,fr,ti,audio,AudioRange] = CreateSpectrogram(call)
+function [I,windowsize,noverlap,nfft,rate,box,s,fr,ti,audio,AudioRange] = CreateSpectrogram(call, windowsize, noverlap, nfft)
 %% Extract call features for CalculateStats and display
+%{
+
+%% INPUTS
+call - row from a call file
+windowsize - spectrogram window size in seconds
+noverlap - spectrogram overlap in seconds
+nfft - spectrogram window size in seconds
+
+%% OUTPUTS
+    I - part of the spectrogram within the box
+    rate - samplerate
+    box - [start_time, lower_freq, duration, bandwidth]
+    s - spectrogram of whole audio section
+    AudioRange - [audio sample index at start of box, audio sample index at end of box]
+
+%}
 
 rate = call.Rate;
 box = call.Box;
@@ -14,18 +30,25 @@ end
 
 %% Make Spectrogram and box
 % Spectrogram Settings
-if  call.RelBox(2)+call.RelBox(4) < 10 % For audible calls
-    windowsize = round(rate * 0.01);
-    noverlap = round(rate * 0.009);
-    nfft = round(rate * 0.02);
-elseif (call.RelBox(3) < .4 ) % Spect settings for short calls
-    windowsize = round(rate * 0.0032);
-    noverlap = round(rate * 0.0028);
-    nfft = round(rate * 0.0032);
-else % long calls
-    windowsize = round(rate * 0.01);
-    noverlap = round(rate * 0.005);
-    nfft = round(rate * 0.01);
+
+if nargin == 4 % if no spectrogram setting given
+    windowsize = round(rate * windowsize);
+    noverlap = round(rate * noverlap);
+    nfft = round(rate * nfft);
+else
+    if  call.RelBox(2)+call.RelBox(4) < 10 % For audible calls
+        windowsize = round(rate * 0.01);
+        noverlap = round(rate * 0.009);
+        nfft = round(rate * 0.02);
+    elseif (call.RelBox(3) < .4 ) % Spect settings for short calls
+        windowsize = round(rate * 0.0032);
+        noverlap = round(rate * 0.0028);
+        nfft = round(rate * 0.0032);
+    else % long calls
+        windowsize = round(rate * 0.01);
+        noverlap = round(rate * 0.005);
+        nfft = round(rate * 0.01);
+    end
 end
 
 % Spectrogram

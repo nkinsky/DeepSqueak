@@ -9,7 +9,7 @@ end
 [I,windowsize,noverlap,nfft,rate,box,s,fr,ti,audio,AudioRange] = CreateSpectrogram(handles.data.calls(handles.data.currentcall, :));
 
 % Plot Spectrogram
-set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 2*mean(max(I))]);
+set(handles.axes1,'YDir', 'normal', 'YColor', [1 1 1], 'XColor', [1 1 1], 'Clim', prctile(I, [1 99], 'all'));
 set(handles.spect,'CData',imgaussfilt(abs(s)),'XData',ti,'YData',fr/1000);
 
 if handles.data.settings.DisplayTimePadding ~= 0
@@ -36,7 +36,7 @@ end
 
 % Blur Box
 set(handles.filtered_image_plot,'CData',flipud(stats.FilteredImage))
-set(handles.axes4,'Color',[.1 .1 .1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off','Clim',[.2*min(min(stats.FilteredImage)) .2*max(max(stats.FilteredImage))],'XLim',[1 size(stats.FilteredImage,2)],'YLim',[1 size(stats.FilteredImage,1)]);
+set(handles.axes4,'Color',[.1 .1 .1], 'YColor', [1 1 1], 'XColor',[1 1 1], 'Box', 'off', 'Clim', prctile(stats.FilteredImage, [2 98], 'all'), 'XLim', [1 size(stats.FilteredImage,2)], 'YLim', [1 size(stats.FilteredImage,1)]);
 set(handles.axes4,'YTickLabel',[]);
 set(handles.axes4,'XTickLabel',[]);
 set(handles.axes4,'XTick',[]);
