@@ -3,9 +3,9 @@
 
 Full audio file navigation
 
-Dolphins! What! Crazy!
-
 Integration of DeepSqueak Screener
+
+New Collaborator: Robert Ciszek from University of Eastern Finland!
 
 # DeepSqueak-Screener
 
