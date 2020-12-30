@@ -1,9 +1,10 @@
 %% This function prepares data for clustering
 
-function [ClusteringData, clustAssign]= CreateClusteringData(data, forClustering)
+function [ClusteringData, clustAssign]= CreateClusteringData(handles, forClustering)
 % For each file selected, create a cell array with the image, and contour
 % of calls where Calls.Accept == 1
 
+data = handles.data;
 cd(data.squeakfolder);
 if forClustering
     prompt = 'Select detection file(s) for clustering AND/OR extracted contours';
@@ -29,27 +30,31 @@ stats.DeltaTime = [];
 %% For Each File
 for j = 1:length(fileName)
     file = load(fullfile(filePath,fileName{j}));
-    
+     [Calls,audiodata,loaded_ClusteringData] = loadCallfile(fullfile(filePath,fileName{j}),handles);
+     
+     if isfield(audiodata,'AudioFile') & ~audiodata.AudioFile
+        errordlg(sprintf('File %s not found in folder %s',fileName{j},filePath ),'Audio File Error');    
+     end
+     
+     handles.data.audiodata = audiodata;
+
     % If the files is extracted contours, rather than a detection file
-    if forClustering && isfield(file,'ClusteringData')
-        ClusteringData = [ClusteringData; file.ClusteringData];
-    elseif isfield(file,'Calls')
+    if forClustering & ~isempty(loaded_ClusteringData)
+        ClusteringData = [ClusteringData; loaded_ClusteringData];
+    elseif ~isempty(Calls)
         
-        % Backwards compatibility with struct format for detection files
-        if isstruct(file.Calls); file.Calls = struct2table(file.Calls, 'AsArray', true); end
-    
         % for each call in the file, calculate stats for clustering
-        for i = 1:height(file.Calls)
-            waitbar(i/height(file.Calls),h,['Loading File ' num2str(j) ' of '  num2str(length(fileName))]);
+        for i = 1:height(Calls)
+            waitbar(i/height(Calls),h,['Loading File ' num2str(j) ' of '  num2str(length(fileName))]);
             
             % Skip if not accepted
-            if ~file.Calls.Accept(i) || ismember(file.Calls.Type(i),'Noise')
+            if ~Calls.Accept(i) || ismember(Calls.Type(i),'Noise')
                 continue
             end
             
-            call = file.Calls(i,:);
-            
-            [I,wind,noverlap,nfft,rate,box] = CreateSpectrogram(call);
+            call = Calls(i,:);
+
+            [I,wind,noverlap,nfft,rate,box,~] = CreateFocusSpectrogram(call,handles,true);
             im = mat2gray(flipud(I),[0 max(max(I))/4]); % Set max brightness to 1/4 of max
             
             if forClustering
@@ -70,7 +75,7 @@ for j = 1:length(fileName)
                 {[filePath fileName{j}]} % File path
                 {i} % Call ID in file
                 {stats.Power}
-                {call.RelBox(4)}
+                {call.RelBox(4)}              
                 ]'];
             
             clustAssign = [clustAssign; file.Calls.Type(i)];

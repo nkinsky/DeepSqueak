@@ -2,12 +2,16 @@ classdef squeakData < handle
     properties
         calls
         currentcall = 1
+        current_call_tag = '1'
+        current_call_valid = true
+        windowposition = 1;
         cmap = 'inferno'
         cmapName = {'inferno'}
         settings = struct()
         squeakfolder
+        audiodata
         % Keyboard shortcuts for labelling calls
-        labelShortcuts = {'1','2','3','4','5','6','7','8','9','0','-','='}
+        labelShortcuts = {'1','2','3','4','5','6','7','8','9','0','=','+','!','"','#','¤','%','&','/','(',')','=','?','@','£','$','{','[',']','}'}
     end
     methods
         function obj = squeakData(squeakfolder)
@@ -27,8 +31,11 @@ classdef squeakData < handle
                 obj.settings.HighFreq = 115;
                 obj.settings.AmplitudeThreshold = 0;
                 obj.settings.EntropyThreshold = 0.3;
-                obj.settings.labels = {'FF','FM','Trill','Split',' ',' ',' ',' ',' ',' '};
+                obj.settings.labels = {'FF','FM','Trill','Split',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
                 obj.settings.DisplayTimePadding = 0;
+                obj.settings.windowSize = 1;
+                obj.settings.spectogram_ticks = 11;
+                obj.settings.focus_window_size = 0.5;
                 disp('Settings file not found. Create a new one...')
                 saveSettings(obj)
             end
