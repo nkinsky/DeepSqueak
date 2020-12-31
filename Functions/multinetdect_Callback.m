@@ -82,7 +82,7 @@ for j = 1:length(audioselections)
     end
     
     [~,audioname] = fileparts(AudioFile);
-    detectiontime=datestr(datetime('now'),'mmm-DD-YYYY HH_MM PM');
+    detectiontime=datestr(datetime('now'),'yyyy-mm-dd HH_MM PM');
     
     if isempty(Calls)
         fprintf(1,'No Calls found in: %s \n',audioname)

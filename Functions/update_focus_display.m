@@ -35,12 +35,9 @@ stats = CalculateStats(I_f,windowsize_f,noverlap_f,nfft_f,rate_f,box_f,handles.d
 
 handles.data.calls.Power(handles.data.currentcall) = stats.MaxPower;
 
-
-guidata(hObject,handles);
-handles = guidata(hObject);
 % Box Creation
 render_call_boxes(handles.axes1, handles,hObject, true,false);
-
+handles = guidata(hObject);
 
 
 % if stats.FilteredImage

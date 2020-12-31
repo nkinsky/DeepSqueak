@@ -57,7 +57,7 @@ elseif window_start > window_stop
    window_start = window_stop -  window_width;
 end
 
-audio = handles.data.audiodata.samples(window_start:window_stop); 
+audio = handles.data.audiodata.samples(round(window_start):round(window_stop)); 
 
 rel_pos_start = (call_box_start - window_start ) / window_width; 
 rel_pos_stop = (call_box_end-window_start) / window_width; 

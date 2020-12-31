@@ -15,6 +15,11 @@ end
 samplerate = info.SampleRate;
 hc = waitbar(0,'Importing Calls from Raven Log');
 
+% fix some compatibility issues with Raven's naming
+if ~ismember('DeltaTime_s_', ravenTable.Properties.VariableNames)
+    ravenTable.DeltaTime_s_ = ravenTable.EndTime_s_ - ravenTable.BeginTime_s_;
+end
+
 %% Get the data from the raven file
 Rate   = repmat(samplerate, height(ravenTable),1);
 Box    = [ravenTable.BeginTime_s_, ravenTable.LowFreq_Hz_/1000, ravenTable.DeltaTime_s_, (ravenTable.HighFreq_Hz_ - ravenTable.LowFreq_Hz_)/1000];

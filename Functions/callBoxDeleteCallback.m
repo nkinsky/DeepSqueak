@@ -96,7 +96,7 @@ function choice = choosedialog(rectangle,handles)
 
 
     function label_callback(hObject,event,new_type)
-        i = find_call_by_tag(handles.data.calls,tag);
+        i = find(handles.data.calls.Tag == str2double(tag), 1);
         if ~isempty(i)
                 handles.data.calls{i,'Type'} = {new_type};
                 guidata(figure,handles);
