@@ -5,6 +5,7 @@ classdef squeakData < handle
         current_call_tag = '1'
         current_call_valid = true
         windowposition = 1;
+        lastWindowPosition = -1;
         cmap = 'inferno'
         cmapName = {'inferno'}
         settings = struct()
@@ -12,6 +13,7 @@ classdef squeakData < handle
         audiodata
         % Keyboard shortcuts for labelling calls
         labelShortcuts = {'1','2','3','4','5','6','7','8','9','0','=','+','!','"','#','¤','%','&','/','(',')','=','?','@','£','$','{','[',']','}'}
+        page_spect = struct() % spectrogram of the page view
     end
     methods
         function obj = squeakData(squeakfolder)
@@ -32,7 +34,6 @@ classdef squeakData < handle
                 obj.settings.AmplitudeThreshold = 0;
                 obj.settings.EntropyThreshold = 0.3;
                 obj.settings.labels = {'FF','FM','Trill','Split',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-                obj.settings.DisplayTimePadding = 0;
                 obj.settings.windowSize = 1;
                 obj.settings.spectogram_ticks = 11;
                 obj.settings.focus_window_size = 0.5;

@@ -34,7 +34,7 @@ end
 handles.data.calls = handles.data.calls(idx, :);
 handles.data.calls.Tag =[1:size(handles.data.calls,1)]';
 guidata(hObject, handles);
-updateWindowPosition(hObject,handles);
+handles.data.windowposition = updateWindowPosition(handles);
 update_fig(hObject, eventdata, handles);
 
 if show_waitbar

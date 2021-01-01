@@ -1,11 +1,9 @@
-function updateWindowPosition(hObject,handles)
-    [positiondata] = calculatePositionData(handles);
-    if handles.data.windowposition  + handles.data.settings.windowSize < positiondata.current_call_start || handles.data.windowposition  + handles.data.settings.windowSize > positiondata.current_call_start
-        jumps = floor(positiondata.current_call_start / handles.data.settings.windowSize);  
-        handles.data.windowposition = jumps*handles.data.settings.windowSize;
-    end
-      
-    guidata(hObject, handles);
-    
-   
+function windowposition = updateWindowPosition(handles)
+
+current_call_start = handles.data.calls.Box(handles.data.currentcall,1);
+
+if handles.data.windowposition  + handles.data.settings.windowSize < current_call_start || handles.data.windowposition  + handles.data.settings.windowSize > current_call_start
+    jumps = floor(current_call_start / handles.data.settings.windowSize);
+    windowposition = jumps*handles.data.settings.windowSize;
+end
 end

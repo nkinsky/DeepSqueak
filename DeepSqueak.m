@@ -244,10 +244,13 @@ if handles.data.currentcall(1) < height(handles.data.calls) % If not the last ca
     handles.data.currentcall=handles.data.currentcall+1;
     handles.data.current_call_valid = true;
     handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-    handles = guidata(hObject);    
-    updateWindowPosition(hObject,handles);
-    handles = guidata(hObject);
-    handles.current_focus_position = [];    
+    box_center = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
+    handles.current_focus_position = ...
+        [box_center - handles.data.settings.focus_window_size,...
+        0,...
+        handles.data.settings.focus_window_size*2,...
+        0];
+    handles.data.windowposition = updateWindowPosition(handles);
     update_fig(hObject, eventdata, handles);
 end
 % guidata(hObject, handles);
@@ -257,9 +260,14 @@ function PreviousCall_Callback(hObject, eventdata, handles)
 if handles.data.currentcall(1) >1 % If not the first call
     handles.data.currentcall=handles.data.currentcall-1;
     handles.data.current_call_valid = true;
-    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});    
-    handles.current_focus_position = [];
-    updateWindowPosition(hObject,handles);
+    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
+    box_center = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
+    handles.current_focus_position = ...
+        [box_center - handles.data.settings.focus_window_size,...
+        0,...
+        handles.data.settings.focus_window_size*2,...
+        0];
+    handles.data.windowposition = updateWindowPosition(handles);
     update_fig(hObject, eventdata, handles);
 end
 
@@ -315,7 +323,7 @@ function slide_focus(focus_offset, hObject, eventdata, handles)
     end
 
     focus_position = min(handles.current_focus_position(1) + focus_offset, handles.data.audiodata.duration);
-    focus_position = max(handles.current_focus_position(1) + focus_offset, 0);
+    focus_position = max(focus_position, 0);
     
 
     if focus_position >= handles.data.windowposition + handles.data.settings.windowSize
@@ -325,10 +333,12 @@ function slide_focus(focus_offset, hObject, eventdata, handles)
             backwardButton_Callback(hObject, eventdata, handles);   
         end 
         
-        calls = list_calls_within_window(handles, [focus_position,focus_position + handles.data.settings.focus_window_size]);
+        calls_within_window = find(...
+            handles.data.calls.Box(:,1) > focus_position &...
+            sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.settings.focus_window_size);
     
-        if ~isempty(calls)
-           handles.data.currentcall = calls(1);
+        if ~isempty(calls_within_window)
+           handles.data.currentcall = calls_within_window(1);
 
            handles.data.current_call_valid = true;
            handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
@@ -795,15 +805,17 @@ function forwardButton_Callback(hObject, eventdata, handles)
 
 function update_position(hObject, eventdata, handles)
 
-    calls = list_calls_within_window(handles, [handles.data.windowposition, handles.data.windowposition + handles.data.settings.windowSize]);
-    
-    if ~isempty(calls)
-       handles.data.currentcall = calls(1);
-       handles.data.current_call_valid = true;
-       handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-       handles.current_focus_position = [];       
+    calls_within_window = find(...
+        handles.data.calls.Box(:,1) > handles.data.windowposition &...
+        sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize);
+
+    if ~isempty(calls_within_window)
+        handles.data.currentcall = calls_within_window(1);
+        handles.data.current_call_valid = true;
+        handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
+        handles.current_focus_position = [];
     end
-    handles.current_focus_position =  [handles.data.windowposition, 0,  handles.data.settings.focus_window_size,0];   
+    handles.current_focus_position =  [handles.data.windowposition, 0,  handles.data.settings.focus_window_size,0];
     update_fig(hObject, eventdata, handles);
     guidata(hObject, handles);
 

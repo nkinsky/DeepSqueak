@@ -14,7 +14,7 @@ function  roiMovedCallback(rectangle,evt)
 
         audio_start = max(audio_start,1);
         audio_stop = min(audio_stop,size(handles.data.audiodata.samples,1));
-        audio = handles.data.audiodata.samples(audio_start:audio_stop);
+        audio = handles.data.audiodata.samples(round(audio_start):round(audio_stop));
         audio = audio - mean(audio,1);
         handles.data.calls{i, 'Audio'} = {int16(audio*32767)};            
     end

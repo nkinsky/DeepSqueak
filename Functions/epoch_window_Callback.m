@@ -9,11 +9,16 @@ function epoch_window_Callback(hObject, eventdata, handles)
     click_position = eventdata.IntersectionPoint;
     
     window_min = click_position(1) - seconds/2;
-    window_max = click_position(1) + seconds/2;
-    calls_within_window = list_calls_within_window(handles,[window_min, window_max]);
+    window_max = click_position(1) + seconds/2;    
+    calls_within_window = find(...
+        handles.data.calls.Box(:,1) > window_min &...
+        sum(handles.data.calls.Box(:,[1,3]),2) < window_max);
 
+    % Find the call closest to the click and make it the current call
     if ~isempty(calls_within_window)
-        handles.data.currentcall = calls_within_window(1);
+        callMidpoints = handles.data.calls.Box(calls_within_window,1) + handles.data.calls.Box(calls_within_window,3)/2;
+        [~, closestCall] = min(abs(callMidpoints - click_position(1)));
+        handles.data.currentcall = calls_within_window(closestCall);
         handles.data.current_call_valid = true;
         handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});  
     else
