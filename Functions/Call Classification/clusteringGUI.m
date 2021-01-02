@@ -9,9 +9,9 @@ ClusteringData = ClusteringData1;
 thumbnail_size = [60*2 100*2];
 rejected = zeros(1,length(clustAssign));
 
-minfreq = floor(min([ClusteringData{:,2}]))-1;
-maxfreq = ceil(max([ClusteringData{:,2}] + [ClusteringData{:,9}]));
-mfreq = cellfun(@mean,(ClusteringData(:,4)));
+minfreq = floor(min(ClusteringData.MinFreq))-1;
+maxfreq = ceil(max(ClusteringData.MinFreq + ClusteringData.Bandwidth));
+mfreq = cellfun(@mean,ClusteringData.xFreq);
 ColorData = jet(maxfreq - minfreq); % Color by mean frequency
 if iscategorical(clustAssign)
     clusterName =unique(clustAssign);
@@ -174,9 +174,9 @@ function mouse_over_Callback(hObject, eventdata, handles)
             axis_position = get(ha(i),'Position');
 
             if cursor_point(1)>axis_position(1) && cursor_point(2)>axis_position(2) && cursor_point(1) < (axis_position(1)+axis_position(3)) && cursor_point(2)<(axis_position(2)+axis_position(4))
-                [~,name,~] = fileparts(ClusteringData{call_index,6});
+                [~,name,~] = fileparts(ClusteringData.Filename(call_index));
                 call_file = name ;
-                call_id = num2str(ClusteringData{call_index,7});
+                call_id = num2str(ClusteringData.callID(call_index));
             end
         end     
     end
@@ -284,7 +284,7 @@ global ha ClusteringData
         x_lim = xlim(axis_handles);
         x_span = x_lim(2) - x_lim(1);
         xtick_positions = linspace(x_span*rel_x(1)+x_lim(1), x_span*rel_x(2)+x_lim(1),4);            
-        x_ticks = linspace(0,ClusteringData{i,3},4);
+        x_ticks = linspace(0,ClusteringData.Duration(i),4);
         x_ticks = arrayfun(@(x) sprintf('%.3f',x),x_ticks(2:end),'UniformOutput',false);
         
         y_lim = ylim(axis_handles);
@@ -293,7 +293,7 @@ global ha ClusteringData
 
 
         
-        y_ticks = linspace(ClusteringData{i,2},ClusteringData{i,2}+ClusteringData{i,9},3);
+        y_ticks = linspace(ClusteringData.MinFreq(i),ClusteringData.MinFreq(i)+ClusteringData.Bandwidth(i),3);
         y_ticks = arrayfun(@(x) sprintf('%.1f',x),y_ticks(1:end),'UniformOutput',false);
         y_ticks = flip(y_ticks);
 
@@ -452,11 +452,11 @@ function [colorIM, rel_x, rel_y] = create_thumbnail(ClusteringData,clustIndex,th
     rel_x = [0 1];
     rel_y = [0 1];   
     
-    if size(ClusteringData{clustIndex(callID),1},1) < size(ClusteringData{clustIndex(callID),1},2)
-        aspect_ratio = size(ClusteringData{clustIndex(callID),1},1) / size(ClusteringData{clustIndex(callID),1},2);
+    if size(ClusteringData.Spectrogram{clustIndex(callID)},1) < size(ClusteringData.Spectrogram{clustIndex(callID)},2)
+        aspect_ratio = size(ClusteringData.Spectrogram{clustIndex(callID)},1) / size(ClusteringData.Spectrogram{clustIndex(callID)},2);
         scaled_heigth = round(thumbnail_size(1) * aspect_ratio);
         offset = round((thumbnail_size(1) - scaled_heigth )/2);
-        resized = imresize(ClusteringData{clustIndex(callID),1},[scaled_heigth thumbnail_size(2)]);
+        resized = imresize(ClusteringData.Spectrogram{clustIndex(callID)},[scaled_heigth thumbnail_size(2)]);
         start_index = offset;
         end_index = offset+scaled_heigth-1;
         if offset
@@ -466,10 +466,10 @@ function [colorIM, rel_x, rel_y] = create_thumbnail(ClusteringData,clustIndex,th
             im = resized;
         end
     else 
-        aspect_ratio = size(ClusteringData{clustIndex(callID),1},1) / size(ClusteringData{clustIndex(callID),1},2);
+        aspect_ratio = size(ClusteringData.Spectrogram{clustIndex(callID)},1) / size(ClusteringData.Spectrogram{clustIndex(callID)},2);
         scaled_width = round(thumbnail_size(2) / aspect_ratio);
         offset = round((thumbnail_size(2) - scaled_width )/2);
-        resized = imresize(ClusteringData{clustIndex(callID),1},[thumbnail_size(1) scaled_width]);
+        resized = imresize(ClusteringData.Spectrogram{clustIndex(callID)},[thumbnail_size(1) scaled_width]);
         start_index = max(offset,1);
         end_index = offset+scaled_width-1;
         if offset 
@@ -482,7 +482,7 @@ function [colorIM, rel_x, rel_y] = create_thumbnail(ClusteringData,clustIndex,th
     
 
     
-    freqdata = round(linspace(ClusteringData{clustIndex(callID),2} + ClusteringData{clustIndex(callID),9},ClusteringData{clustIndex(callID),2},thumbnail_size(1)));
+    freqdata = round(linspace(ClusteringData.MinFreq(clustIndex(callID)) + ClusteringData.Bandwidth(clustIndex(callID)),ClusteringData.MinFreq(clustIndex(callID)),thumbnail_size(1)));
     colorIM(:,:,1) =  single(im).*.0039.*ColorData(freqdata - minfreq,1);
     colorIM(:,:,2) =  single(im).*.0039.*ColorData(freqdata - minfreq,2);
     colorIM(:,:,3) =  single(im).*.0039.*ColorData(freqdata - minfreq,3);    
