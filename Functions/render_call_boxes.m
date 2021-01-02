@@ -82,11 +82,14 @@ for box_number = 1:length(calls_in_page)
 end
 
 % Make any extra boxes invisible
-for i = length(calls_in_page)+1:length(handles.PageWindowRectangles)
-    handles.PageWindowRectangles{i}.Visible = false;
-end
-for i = length(calls_in_page)+1:length(handles.FocusWindowRectangles)
-    handles.FocusWindowRectangles{i}.Visible = false;
+if roi
+    for i = length(calls_in_page)+1:length(handles.FocusWindowRectangles)
+        handles.FocusWindowRectangles{i}.Visible = false;
+    end
+else
+    for i = length(calls_in_page)+1:length(handles.PageWindowRectangles)
+        handles.PageWindowRectangles{i}.Visible = false;
+    end
 end
 
 guidata(hObject, handles);

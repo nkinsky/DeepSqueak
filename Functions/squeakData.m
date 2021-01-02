@@ -14,6 +14,7 @@ classdef squeakData < handle
         % Keyboard shortcuts for labelling calls
         labelShortcuts = {'1','2','3','4','5','6','7','8','9','0','=','+','!','"','#','¤','%','&','/','(',')','=','?','@','£','$','{','[',']','}'}
         page_spect = struct() % spectrogram of the page view
+        focusCenter = 0; % center of the current focus window
     end
     methods
         function obj = squeakData(squeakfolder)

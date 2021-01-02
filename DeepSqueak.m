@@ -180,7 +180,19 @@ set(handles.axes1,'YTick',[]);
 update_folders(hObject, eventdata, handles);
 handles = guidata(hObject);  % Get newest version of handles
 
-set(handles.TonalitySlider,'Value',handles.data.settings.EntropyThreshold);
+% Set the sliders to the saved values
+set(handles.TonalitySlider, 'Value', handles.data.settings.EntropyThreshold);
+
+dropdown_items = cellstr(get(handles.epochWindowSizePopup,'String'));
+dropdown_items = regexprep(dropdown_items, '[^0-9.]', ' ');
+dropdown_items = str2double(dropdown_items);
+set(handles.epochWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.windowSize))
+
+dropdown_items = cellstr(get(handles.focusWindowSizePopup,'String'));
+dropdown_items = regexprep(dropdown_items, '[^0-9.]', ' ');
+dropdown_items = str2double(dropdown_items);
+set(handles.epochWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.focus_window_size))
+    
 guidata(hObject, handles);
 
 set(handles.axes7,'Color',[0.1 0.1 0.1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off','Clim',[0,1]);
@@ -244,13 +256,7 @@ if handles.data.currentcall(1) < height(handles.data.calls) % If not the last ca
     handles.data.currentcall=handles.data.currentcall+1;
     handles.data.current_call_valid = true;
     handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-    box_center = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
-    handles.current_focus_position = ...
-        [box_center - handles.data.settings.focus_window_size,...
-        0,...
-        handles.data.settings.focus_window_size*2,...
-        0];
-    handles.data.windowposition = updateWindowPosition(handles);
+    handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
     update_fig(hObject, eventdata, handles);
 end
 % guidata(hObject, handles);
@@ -261,13 +267,7 @@ if handles.data.currentcall(1) >1 % If not the first call
     handles.data.currentcall=handles.data.currentcall-1;
     handles.data.current_call_valid = true;
     handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-    box_center = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
-    handles.current_focus_position = ...
-        [box_center - handles.data.settings.focus_window_size,...
-        0,...
-        handles.data.settings.focus_window_size*2,...
-        0];
-    handles.data.windowposition = updateWindowPosition(handles);
+    handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
     update_fig(hObject, eventdata, handles);
 end
 
@@ -317,37 +317,31 @@ NextCall_Callback(hObject, eventdata, handles)
 function axes1_CreateFcn(hObject, eventdata, handles)
 
 function slide_focus(focus_offset, hObject, eventdata, handles)
+% Move the focus window one unit over
+new_position = handles.data.focusCenter + focus_offset;
+new_position = min(new_position, handles.data.audiodata.duration - handles.data.settings.focus_window_size ./ 2);
+new_position = max(new_position, handles.data.settings.focus_window_size ./ 2);
+handles.data.focusCenter = new_position;
 
-    if isempty(handles.current_focus_position)
-        handles.current_focus_position = handles.data.windowposition;
-    end
-
-    focus_position = min(handles.current_focus_position(1) + focus_offset, handles.data.audiodata.duration);
-    focus_position = max(focus_position, 0);
+if new_position >= handles.data.windowposition + handles.data.settings.windowSize
+    forwardButton_Callback(hObject, eventdata, handles);
+elseif new_position < handles.data.windowposition
+    backwardButton_Callback(hObject, eventdata, handles);
+else
+    calls_within_window = find(...
+        handles.data.calls.Box(:,1) > new_position &...
+        sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.settings.focus_window_size);
     
-
-    if focus_position >= handles.data.windowposition + handles.data.settings.windowSize
-        forwardButton_Callback(hObject, eventdata, handles);
-    else
-        if focus_position < handles.data.windowposition
-            backwardButton_Callback(hObject, eventdata, handles);   
-        end 
+    if ~isempty(calls_within_window)
+        handles.data.currentcall = calls_within_window(1);
         
-        calls_within_window = find(...
-            handles.data.calls.Box(:,1) > focus_position &...
-            sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.settings.focus_window_size);
-    
-        if ~isempty(calls_within_window)
-           handles.data.currentcall = calls_within_window(1);
-
-           handles.data.current_call_valid = true;
-           handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-        end
-        
-        handles.current_focus_position =  [focus_position, 0,  handles.data.settings.focus_window_size,0];
-        guidata(hObject,handles);
-        update_fig(hObject, eventdata, handles);
+        handles.data.current_call_valid = true;
+        handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
     end
+    
+    guidata(hObject,handles);
+    update_fig(hObject, eventdata, handles);
+end
 
 function score_Callback(hObject, eventdata, handles)
 
@@ -367,24 +361,12 @@ end
 
 % --- Executes on key press with focus on figure1 or any of its controls.
 function figure1_WindowKeyPressFcn(hObject, eventdata, handles)
-
-if strcmp(eventdata.Key,'uparrow')
-    slide_focus(handles.data.settings.focus_window_size, hObject, eventdata, handles)
-end
-if strcmp(eventdata.Key,'downarrow')
-    slide_focus(handles.data.settings.focus_window_size*(-1), hObject, eventdata, handles)
-end
-if strcmp(eventdata.Key,'space')
-    forwardButton_Callback(hObject, eventdata, handles);
-end
-
 switch eventdata.Character
-   
     case 'p'
         PlayCall_Callback(hObject, eventdata, handles)
-    case {'e', char(29)} % char(29) is right arrow key
+    case {'e', 29} % char(29) is right arrow key
         NextCall_Callback(hObject, eventdata, handles)
-    case {'q', char(28)} % char(28) is left arrow key
+    case {'q', 28} % char(28) is left arrow key
         PreviousCall_Callback(hObject, eventdata, handles)
     case 'a'
         AcceptCall_Callback(hObject, eventdata, handles)
@@ -392,6 +374,12 @@ switch eventdata.Character
         RejectCall_Callback(hObject, eventdata, handles)
     case 'd'
         rectangle_Callback(hObject, eventdata, handles)
+    case 30 % char(30) is up arrow key
+        slide_focus(+ handles.data.settings.focus_window_size, hObject, eventdata, handles)
+    case 31 % char(31) is down arrow key
+        slide_focus(- handles.data.settings.focus_window_size, hObject, eventdata, handles)
+    case 'space'
+        forwardButton_Callback(hObject, eventdata, handles);
     case handles.data.labelShortcuts
         %% Update the call labels
         % Index of the shortcut
@@ -423,8 +411,8 @@ current_box = drawrectangle( 'Parent',handles.axes1,...
   
 audio_start = handles.data.audiodata.sample_rate*current_box.Position(1);
 audio_stop = handles.data.audiodata.sample_rate*(current_box.Position(1) + current_box.Position(3) );
-audio_start = max(audio_start,1);
-audio_stop = min(audio_stop,size(handles.data.audiodata.samples,1));
+audio_start = round(max(audio_start,1));
+audio_stop = found(min(audio_stop,size(handles.data.audiodata.samples,1)));
 audio = handles.data.audiodata.samples(audio_start:audio_stop);
 audio = audio - mean(audio,1);
 new_tag = max(handles.data.calls.Tag) + 1;
@@ -791,33 +779,58 @@ hObject.Value = round(hObject.Value);
 
 % --- Executes on button press in backwardButton.
 function backwardButton_Callback(hObject, eventdata, handles)
-    handles.data.windowposition = max(0, handles.data.windowposition - handles.data.settings.windowSize);
-    guidata(hObject, handles);     
-    handles = guidata(hObject);
-    update_position(hObject, eventdata, handles);
- 
+% handles.data.windowposition = max(0, handles.data.windowposition - handles.data.settings.windowSize);
+handles.data.focusCenter = max(0, handles.data.windowposition - handles.data.settings.focus_window_size ./ 2);
+% get_closest_call_to_focus(hObject, eventdata, handles);
+
+jumps = floor(handles.data.focusCenter / handles.data.settings.windowSize);
+handles.data.windowposition = jumps*handles.data.settings.windowSize;
+
+calls_within_window = find(handles.data.calls.Box(:,1) < handles.data.windowposition + handles.data.settings.windowSize, 1, 'last');
+if ~isempty(calls_within_window)
+    handles.data.currentcall = calls_within_window;
+    handles.data.current_call_valid = true;
+    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
+end
+
+update_fig(hObject, eventdata, handles);
+
+
 % --- Executes on button press in forwardButton.
-function forwardButton_Callback(hObject, eventdata, handles) 
-    handles.data.windowposition = min(handles.data.audiodata.duration, handles.data.windowposition + handles.data.settings.windowSize);  
-    guidata(hObject, handles);
-    handles = guidata(hObject);
-    update_position(hObject, eventdata, handles);
+function forwardButton_Callback(hObject, eventdata, handles)
+% handles.data.windowposition = min(handles.data.audiodata.duration - handles.data.settings.windowSize, handles.data.windowposition + handles.data.settings.windowSize);
+handles.data.focusCenter = handles.data.windowposition + handles.data.settings.windowSize + handles.data.settings.focus_window_size ./ 2;
+handles.data.focusCenter = min(handles.data.focusCenter, handles.data.audiodata.duration - handles.data.settings.focus_window_size ./ 2);
 
-function update_position(hObject, eventdata, handles)
+jumps = floor(handles.data.focusCenter / handles.data.settings.windowSize);
+handles.data.windowposition = jumps*handles.data.settings.windowSize;
 
-    calls_within_window = find(...
-        handles.data.calls.Box(:,1) > handles.data.windowposition &...
-        sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize);
+% handles.data.focusCenter = max(0, handles.data.windowposition - handles.data.settings.focus_window_size ./ 2);
+% get_closest_call_to_focus(hObject, eventdata, handles);
 
-    if ~isempty(calls_within_window)
-        handles.data.currentcall = calls_within_window(1);
-        handles.data.current_call_valid = true;
-        handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-        handles.current_focus_position = [];
-    end
-    handles.current_focus_position =  [handles.data.windowposition, 0,  handles.data.settings.focus_window_size,0];
-    update_fig(hObject, eventdata, handles);
-    guidata(hObject, handles);
+calls_within_window = find(handles.data.calls.Box(:,1) > handles.data.windowposition, 1);
+if ~isempty(calls_within_window)
+    handles.data.currentcall = calls_within_window;
+    handles.data.current_call_valid = true;
+    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
+end
+
+update_fig(hObject, eventdata, handles);
+% guidata(hObject, handles);
+
+function get_closest_call_to_focus(hObject, eventdata, handles)
+calls_within_window = find(...
+    handles.data.calls.Box(:,1) > handles.data.windowposition &...
+    sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize);
+if ~isempty(calls_within_window)
+    callMidpoints = handles.data.calls.Box(calls_within_window,1) + handles.data.calls.Box(calls_within_window,3)/2;
+    [~, closestCall] = min(abs(callMidpoints - handles.data.focusCenter));
+    handles.data.currentcall = calls_within_window(closestCall);
+    handles.data.current_call_valid = true;
+    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
+end
+update_fig(hObject, eventdata, handles);
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function epochWindowSizePopup_CreateFcn(hObject, eventdata, handles)
@@ -983,16 +996,16 @@ function freqUpper_Callback(hObject, eventdata, handles)
 % hObject    handle to freqUpper (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-%     set(hObject, 'String', num2str(get_spectogram_max(hObject, handles))); 
+%     set(hObject, 'String', num2str(get_spectogram_max(hObject, handles)));
 %     guidata(hObject,handles);
 %     update_fig(hObject, [], handles);
 HighFreq=str2double(get(hObject,'String'));
-    try
-        handles.data.settings.HighFreq = HighFreq;
-        update_fig(hObject, eventdata, handles);
-    catch
-        errordlg('High cutoff must be greater than low cutoff.')
-    end
+try
+    handles.data.settings.HighFreq = HighFreq;
+    update_fig(hObject, eventdata, handles);
+catch
+    errordlg('High cutoff must be greater than low cutoff.')
+end
 % Hints: get(hObject,'String') returns contents of freqUpper as text
 %        str2double(get(hObject,'String')) returns contents of freqUpper as a double
 
@@ -1012,13 +1025,13 @@ function freqLower_Callback(hObject, eventdata, handles)
 % hObject    handle to freqLower (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-LowFreq=str2double(get(hObject,'String'));
-    if HighFreq > LowFreq
-        handles.data.settings.LowFreq = LowFreq;     
-        update_fig(hObject, eventdata, handles);
-    else
-        errordlg('High cutoff must be greater than low cutoff.')
-    end
+LowFreq = str2double(get(hObject,'String'));
+if handles.data.settings.HighFreq > LowFreq
+    handles.data.settings.LowFreq = LowFreq;
+    update_fig(hObject, eventdata, handles);
+else
+    errordlg('High cutoff must be greater than low cutoff.')
+end
 % Hints: get(hObject,'String') returns contents of freqLower as text
 %        str2double(get(hObject,'String')) returns contents of freqLower as a double
 
@@ -1045,13 +1058,12 @@ function loadcalls_ButtonDownFcn(hObject, eventdata, handles)
 function callBackward_Callback(hObject, eventdata, handles)
 if handles.data.currentcall>1 % If not the first call
     handles.data.currentcall=handles.data.currentcall-1;
-    handles.current_focus_position =  [handles.data.windowposition, 0,  handles.data.settings.focus_window_size,0];   
+    handles.data.focusCenter = handles.data.windowposition + handles.data.settings.windowSize - handles.data.settings.focus_window_size ./ 2;
     update_fig(hObject, eventdata, handles);
 end
 
 % --- Executes on button press in callForward.
 function callForward_Callback(hObject, eventdata, handles)
-
 if handles.data.currentcall < height(handles.data.calls) % If not the last call
     handles.data.currentcall=handles.data.currentcall+1;
     update_focus_display(hObject, handles);

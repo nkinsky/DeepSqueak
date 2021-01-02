@@ -1,11 +1,13 @@
 function  epochWindowSizePopup_Callback(hObject, eventdata, handles)
 
-hObject = handles.epochWindowSizePopup;
-padding = cellstr(get(hObject,'String')); 
-seconds = regexp(padding{get(hObject,'Value')},'([\d*.])*','match');
-seconds = str2num(seconds{1});
-handles.data.settings.windowSize = seconds;
-update_fig(hObject, eventdata, handles);
+% hObject = handles.epochWindowSizePopup;
+dropdown_items = cellstr(get(hObject,'String')); 
+page_seconds = regexp(dropdown_items{get(hObject,'Value')},'([\d*.])*','match');
+page_seconds = str2double(page_seconds{1});
+handles.data.settings.windowSize = page_seconds;
+handles.data.saveSettings();
+
+update_fig(hObject, eventdata, handles, true);
 
 guidata(hObject, handles);
 end

@@ -1,22 +1,30 @@
 function initialize_display(hObject, eventdata, handles)
 
-handles.data.currentcall=1;
-handles.data.current_call_tag = 1;
-handles.data.current_call_valid = true;
-
-handles.data.windowposition = 1;
-handles.update_position_axes = 0;
-
+% Remove anything currently in the axes
 cla(handles.axes7);
 cla(handles.detectionAxes);
 cla(handles.axes1);
 cla(handles.spectogramWindow);
 %cla(handles.axes4);
 cla(handles.axes3);
+
+%
+handles.data.currentcall = 1;
+handles.data.current_call_tag = 1;
+handles.data.current_call_valid = true;
+
+handles.data.windowposition = 0;
+handles.data.lastWindowPosition = -1;
+handles.update_position_axes = 0;
+
+% Position of the focus window
+handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
+    
+
 %% Create plots for update_fig to update
 
 % Waveform
-handles.Waveform = line(handles.axes3,1,1,'Color',[.1 .75 .75]);
+handles.Waveform = line(handles.axes3,1,1,'Color',[.1 .3 .3]);
 handles.SNR = surface(handles.axes3,[],[],[],[],...
     'facecol','r',...
     'edgecol','interp',...
@@ -74,21 +82,21 @@ handles.PageWindowRectangles = {};
 handles.FocusWindowRectangles = {};
 
 colormap(handles.axes1,handles.data.cmap);
-%colormap(handles.axes4,handles.data.cmap);
+colormap(handles.spectogramWindow,handles.data.cmap);
 
 callPositionAxesXLim = xlim(handles.detectionAxes);
 callPositionAxesXLim(1) = 0;
 callPositionAxesXLim(2) = handles.data.audiodata.duration;
 xlim(handles.detectionAxes,callPositionAxesXLim);
-% handles.currentWindowRectangle = rectangle(handles.detectionAxes,'Position',[0 0 0 0]);
-handles.currentWindowRectangle = rectangle(handles.spectogramWindow,'Position',[0,0,0,0],...
-    'FaceColor', [1, 1, 1, 0.15],'EdgeColor', [1, 1, 1, 1], 'LineWidth',1.5,'LineStyle','--');
 
-handles.current_focus_position = [];
+% Rectangle that shows the current position in the spectrogram
+handles.currentWindowRectangle = rectangle(handles.spectogramWindow,...
+    'Position',[0,0,0,0],...
+    'FaceColor', [1, 1, 1, 0.15],...
+    'EdgeColor', [1, 1, 1, 1], 'LineWidth',1.5,...
+    'LineStyle','--',...
+    'PickableParts', 'none');
 
-updateWindowPosition(hObject,handles);
-popupmenuColorMap_Callback(hObject, eventdata, handles);
-focusWindowSizePopup_Callback(hObject, eventdata, handles);
-epochWindowSizePopup_Callback(hObject, eventdata, handles);
+update_fig(hObject, eventdata, handles);
 guidata(hObject,handles);
 

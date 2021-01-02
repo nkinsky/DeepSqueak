@@ -1,4 +1,4 @@
-function SortCalls(hObject, eventdata, handles, type, show_waitbar, select_added)
+function SortCalls(hObject, eventdata, handles, sort_type, show_waitbar, select_added)
 % Sort current file by score
 set(handles.hFig, 'pointer', 'watch')
 if nargin < 5
@@ -10,7 +10,7 @@ end
 if show_waitbar
     h = waitbar(0,'Sorting...');
 end
-switch type
+switch sort_type
     case 'score'
         [~,idx] = sort(handles.data.calls.Score);
     case 'time'
@@ -32,9 +32,10 @@ else
 end
 
 handles.data.calls = handles.data.calls(idx, :);
-handles.data.calls.Tag =[1:size(handles.data.calls,1)]';
+handles.data.calls.Tag = [1:size(handles.data.calls,1)]';
+handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 guidata(hObject, handles);
-handles.data.windowposition = updateWindowPosition(handles);
+
 update_fig(hObject, eventdata, handles);
 
 if show_waitbar
@@ -43,6 +44,5 @@ end
 
 set(handles.hFig, 'pointer', 'arrow');
 
-guidata(hObject, handles);
 
 end

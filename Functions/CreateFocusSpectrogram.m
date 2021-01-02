@@ -20,7 +20,7 @@ if ~isfield(handles,'current_focus_position')
     handles.current_focus_position = [];
 end
 
-if ~isempty(handles.current_focus_position) & ~call_only
+if ~isempty(handles.current_focus_position) && ~call_only
     box = handles.current_focus_position;   
 end
 
