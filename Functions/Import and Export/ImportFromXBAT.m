@@ -21,8 +21,18 @@ for file = fname
     clear Calls
     
     if exist(audiofile,'file') == 0
-        [audioname, audiopath] = uigetfile({'*.wav;*.wmf;*.flac;*.UVD' 'Audio File';'*.wav' 'WAV (*.wav)'; '*.wmf' 'WMF (*.wmf)'; '*.flac' 'FLAC (*.flac)'; '*.UVD' 'Ultravox File (*.UVD)'},'Select Audio File',handles.data.settings.audiofolder);
-        audiofile = [audiopath, audioname];
+        [audioname, audiopath] = uigetfile({
+            '*.wav;*.ogg;*.flac;*.UVD;*.au;*.aiff;*.aif;*.aifc;*.mp3;*.m4a;*.mp4' 'Audio File'
+            '*.wav' 'WAVE'
+            '*.flac' 'FLAC'
+            '*.ogg' 'OGG'
+            '*.UVD' 'Ultravox File'
+            '*.aiff;*.aif', 'AIFF'
+            '*.aifc', 'AIFC'
+            '*.mp3', 'MP3 (it''s probably a bad idea to record in MP3'
+            '*.m4a;*.mp4' 'MPEG-4 AAC'
+            }, 'Select Audio File',handles.data.settings.audiofolder);
+        audiofile = fullfile(audiopath, audioname);
     end
     
     for i = 1:length(data.event)

@@ -6,7 +6,17 @@ function import_raven_Callback(hObject, eventdata, handles)
 %% Get the files
 [ravenname,ravenpath] = uigetfile([handles.data.squeakfolder '/*.txt'],'Select Raven Log');
 ravenTable = readtable([ravenpath ravenname], 'Delimiter', 'tab');
-[audioname, audiopath] = uigetfile({'*.wav;*.wmf;*.flac;*.UVD' 'Audio File';'*.wav' 'WAV (*.wav)'; '*.wmf' 'WMF (*.wmf)'; '*.flac' 'FLAC (*.flac)'; '*.UVD' 'Ultravox File (*.UVD)'},'Select Audio File',handles.data.settings.audiofolder);
+[audioname, audiopath] = uigetfile({
+    '*.wav;*.ogg;*.flac;*.UVD;*.au;*.aiff;*.aif;*.aifc;*.mp3;*.m4a;*.mp4' 'Audio File'
+    '*.wav' 'WAVE'
+    '*.flac' 'FLAC'
+    '*.ogg' 'OGG'
+    '*.UVD' 'Ultravox File'
+    '*.aiff;*.aif', 'AIFF'
+    '*.aifc', 'AIFC'
+    '*.mp3', 'MP3 (it''s probably a bad idea to record in MP3'
+    '*.m4a;*.mp4' 'MPEG-4 AAC'
+    }, 'Select Audio File',handles.data.settings.audiofolder);
 
 info = audioinfo([audiopath audioname]);
 if info.NumChannels > 1

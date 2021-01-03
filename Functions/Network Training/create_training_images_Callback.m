@@ -28,7 +28,17 @@ if bout ~= 0
         warndlg('Creating images from bouts is only possible with single files at a time. Please select a single detection file, or set bout length to 0.');
         return
     end
-    [audioname, audiopath] = uigetfile({'*.wav;*.wmf;*.flac;*.UVD' 'Audio File';'*.wav' 'WAV (*.wav)'; '*.wmf' 'WMF (*.wmf)'; '*.flac' 'FLAC (*.flac)'; '*.UVD' 'Ultravox File (*.UVD)'},['Select Audio File for ' trainingdata{1}] ,handles.data.settings.audiofolder);
+    [audioname, audiopath] = uigetfile({
+        '*.wav;*.ogg;*.flac;*.UVD;*.au;*.aiff;*.aif;*.aifc;*.mp3;*.m4a;*.mp4' 'Audio File'
+        '*.wav' 'WAVE'
+        '*.flac' 'FLAC'
+        '*.ogg' 'OGG'
+        '*.UVD' 'Ultravox File'
+        '*.aiff;*.aif', 'AIFF'
+        '*.aifc', 'AIFC'
+        '*.mp3', 'MP3 (it''s probably a bad idea to record in MP3'
+        '*.m4a;*.mp4' 'MPEG-4 AAC'
+        }, ['Select Audio File for ' trainingdata{1}] ,handles.data.settings.audiofolder);
     if isnumeric(audioname); return; end
 end
 
