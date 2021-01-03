@@ -49,7 +49,7 @@ else
         dir(fullfile(handles.data.settings.audiofolder, '*.m4a'))
         dir(fullfile(handles.data.settings.audiofolder, '*.mp4'))
         ];
-
+    handles.audiofilesnames = {handles.audiofiles.name};
     if isempty(handles.audiofilesnames)
         set(handles.AudioFilespopup,'String','No Audio in Folder','value',1);
     else
