@@ -31,11 +31,11 @@ if handles.data.lastWindowPosition ~= handles.data.windowposition || force_rende
     set(handles.spectogramWindow, 'Xlim', [handles.data.windowposition, handles.data.windowposition + handles.data.settings.windowSize]);
     set(handles.epochSpect,'CData',zoomed_s,'XData',  zoomed_t,'YData',zoomed_f/1000);
     
-    % Plot Spectrogram in the focus view
-    set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
-    % set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',prctile(s_f,[1,99.9],'all'))
-    set(handles.spect,'Parent',handles.axes1);
-    set(handles.spect,'CData',zoomed_s,'XData', zoomed_t,'YData',zoomed_f/1000);
+%     % Plot Spectrogram in the focus view
+%     set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
+%     % set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',prctile(s_f,[1,99.9],'all'))
+%     set(handles.spect,'Parent',handles.axes1);
+%     set(handles.spect,'CData',zoomed_s,'XData', zoomed_t,'YData',zoomed_f/1000);
 
     % Send the spectrogram back to handles
     handles.data.page_spect.s = zoomed_s;
