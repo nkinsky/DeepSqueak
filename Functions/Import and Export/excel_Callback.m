@@ -1,25 +1,23 @@
 function excel_Callback(hObject, eventdata, handles)
 
-    function t = loop_calls(Calls, hc,includereject,waitbar_text,handles,call_file,audiodata)
-        handles.data.audiodata = audiodata;
+    function t = loop_calls(Calls, hc,includereject,waitbar_text,handles,call_file, audioReader)
         exceltable = [{'ID'} {'File'} {'Label'} {'Accepted'} {'Score'}  {'Begin Time (s)'} {'End Time (s)'} {'Call Length (s)'} {'Principal Frequency (kHz)'} {'Low Freq (kHz)'} {'High Freq (kHz)'} {'Delta Freq (kHz)'} {'Frequency Standard Deviation (kHz)'} {'Slope (kHz/s)'} {'Sinuosity'} {'Mean Power (dB/Hz)'} {'Tonality'}];
         for i = 1:height(Calls) % Do this for each call
             waitbar(i/height(Calls),hc,waitbar_text);
 
             if includereject || Calls.Accept(i)
                 
-                if Calls.Box(1) + Calls.Box(3) > length(handles.data.audiodata.Duration)
-                   warning(sprintf('Call box start beyond audio duration. Skipping call %i in file %s',i,call_file)); 
+                if Calls.Box(1) + Calls.Box(3) > audioReader.audiodata.Duration
+                   warning('Call box start beyond audio duration. Skipping call %i in file %s',i,call_file); 
                    continue;
                 end
                 %Skip boxes with zero time of frequency span
-                call_box = Calls{i, 'Box'};
-                if call_box(3) == 0 | call_box(4) == 0
+                if Calls.Box(i,3) == 0 || Calls.Box(i,4) == 0
                    continue; 
                 end
                 
                 % Get spectrogram data
-                [I,windowsize,noverlap,nfft,rate,box,window_start] = CreateFocusSpectrogram(Calls(i, :),handles,true);
+                [I,windowsize,noverlap,nfft,rate,box] = CreateFocusSpectrogram(Calls(i, :),handles,true, [], audioReader);
                 % Calculate statistics
                 stats = CalculateStats(I,windowsize,noverlap,nfft,rate,box,handles.data.settings.EntropyThreshold,handles.data.settings.AmplitudeThreshold);
 

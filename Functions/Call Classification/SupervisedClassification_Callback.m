@@ -4,7 +4,7 @@ function SupervisedClassification_Callback(hObject, eventdata, handles)
 % "TrainSupervisedClassifier_Callback.m", to classify USVs.
 
 [FileName,PathName] = uigetfile(fullfile(handles.data.squeakfolder,'Clustering Models','*.mat'),'Select Network');
-load([PathName FileName],'ClassifyNet','wind','noverlap','nfft','imageSize','padFreq');
+net = load([PathName FileName],'ClassifyNet','wind','noverlap','nfft','imageSize','padFreq');
 
 if exist('ClassifyNet', 'var') ~= 1
     errordlg('Network not be found. Is this file a trained CNN?')
@@ -32,32 +32,33 @@ h = waitbar(0,'Initializing');
 for j = 1:length(selections) % Do this for each file
     currentfile = selections(j);
     fname = fullfile(handles.detectionfiles(currentfile).folder,handles.detectionfiles(currentfile).name);
-    Calls = loadCallfile(fname,handles);
+    audioReader = squeakData([]);
+    [Calls, audioReader.audiodata] = loadCallfile(fname,handles);
 
     for i = 1:height(Calls)   % For Each Call
         waitbar(((i/height(Calls)) + j - 1) / length(selections), h, ['Classifying file ' num2str(j) ' of ' num2str(length(selections))]);
 
         if Calls.Accept(i)
 
-            audio =  Calls.Audio{i};
-            if ~isfloat(audio)
-                audio = double(audio) / (double(intmax(class(audio)))+1);
-            elseif ~isa(audio,'double')
-                audio = double(audio);
-            end
+%             audio =  Calls.Audio{i};
+%             if ~isfloat(audio)
+%                 audio = double(audio) / (double(intmax(class(audio)))+1);
+%             elseif ~isa(audio,'double')
+%                 audio = double(audio);
+%             end
           
-            options.frequency_padding = padFreq;
-            options.windowsize = wind;
-            options.overlap = noverlap;
-            options.nfft = nfft;
-            [I,~,~,~,~,~,s,~,~,~,~,~] = CreateFocusSpectrogram(Calls(i,:),handles, true,options);
+            options.frequency_padding = net.padFreq;
+            options.windowsize = net.wind;
+            options.overlap = net.noverlap;
+            options.nfft = net.nfft;
+            [I,~,~,~,~,~,s] = CreateFocusSpectrogram(Calls(i,:),handles, true,options, audioReader);
             
             % Use median scaling
             med = median(abs(s(:)));
             im = mat2gray(flipud(I),[med*0.65, med*20]);
 
             X = imresize(im,imageSize);
-            [Class, score] = classify(ClassifyNet, X);
+            [Class, score] = classify(net.ClassifyNet, X);
             Calls.Score(i) = max(score);
             Calls.Type(i) = Class;
         end

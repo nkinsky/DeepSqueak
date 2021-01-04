@@ -228,27 +228,25 @@ varargout{1} = handles.output;
 % --- Executes on button press in PlayCall.
 function PlayCall_Callback(hObject, eventdata, handles)
 % Play the sound within the boxs
-audio =  handles.data.calls.Audio{handles.data.currentcall};
-if ~isfloat(audio)
-    audio = double(audio) / (double(intmax(class(audio)))+1);
-elseif ~isa(audio,'double')
-    audio = double(audio);
-end
+% audio =  handles.data.calls.Audio{handles.data.currentcall};
+audio = handles.data.AudioSamples(...
+    handles.data.calls.Box(handles.data.currentcall, 1),...
+    handles.data.calls.Box(handles.data.currentcall, 1) + handles.data.calls.Box(handles.data.currentcall, 3));
 
 playbackRate = handles.data.calls.Rate(handles.data.currentcall) * handles.data.settings.playback_rate; % set playback rate
 
 % Bandpass Filter
 % audio = bandpass(audio,[handles.data.calls.RelBox(handles.data.currentcall, 2), handles.data.calls.RelBox(handles.data.currentcall, 2) + handles.data.calls.RelBox(handles.data.currentcall, 4)] * 1000,handles.data.calls.Rate(handles.data.currentcall));
-paddedsound = [zeros(3125,1); audio; zeros(3125,1)];
+% paddedsound = [zeros(3125,1); audio; zeros(3125,1)];
 
-soundsc(paddedsound,playbackRate);
+soundsc(audio,playbackRate);
 
 %Set the default sizes for epoch and focus windows
-handles.data.settings.focus_window_size = 0.5;
-handles.data.settings.windowSize = 2;
-handles.data.settings.spectogram_ticks = 11;
+% handles.data.settings.focus_window_size = 0.5;
+% handles.data.settings.windowSize = 2;
+% handles.data.settings.spectogram_ticks = 11;
 
-guidata(hObject, handles);
+% guidata(hObject, handles);
 
 % --- Executes on button press in NextCall.
 function NextCall_Callback(hObject, eventdata, handles)
@@ -408,9 +406,11 @@ function rectangle_Callback(hObject, eventdata, handles)
 current_box = drawrectangle( 'Parent',handles.axes1,...
                             'FaceAlpha',0,...
                             'LineWidth',1 );
-  
-audio = handles.data.AudioSamples(current_box.Position(1), current_box.Position(1) + current_box.Position(3));
-audio = audio - mean(audio,1);
+% Don't do anything if the new box is empty  
+if current_box.Position(3) == 0 || current_box.Position(4) == 4
+    delete(current_box)
+    return
+end
 new_tag = max(handles.data.calls.Tag) + 1;
 % new_box = {handles.data.audiodata.SampleRate, current_box.Position, [0,0,0,0], 0, audio,0,0,1,new_tag };
 new_box = table();
@@ -418,7 +418,6 @@ new_box.Rate = handles.data.audiodata.SampleRate;
 new_box.Box = current_box.Position;
 new_box.RelBox = calculateRelativeBox(current_box.Position, handles.axes1);
 new_box.Score = 1;
-new_box.Audio = {int16(audio*32767)};
 new_box.Type = categorical({'USV'});
 new_box.Power = 0;
 new_box.Accept = 1;
@@ -434,7 +433,6 @@ SortCalls(hObject, eventdata, handles, 'time', 0, -1);
 guidata(hObject,handles);
 delete(current_box)
 update_fig(hObject, eventdata, handles)
-
 guidata(hObject,handles);
 
 % --------------------------------------------------------------------

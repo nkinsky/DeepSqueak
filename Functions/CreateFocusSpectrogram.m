@@ -1,4 +1,4 @@
-function [I,windowsize,noverlap,nfft,rate,box,s,fr,ti,audio] = CreateFocusSpectrogram(call,handles, make_spectrogram,options)
+function [I,windowsize,noverlap,nfft,rate,box,s,fr,ti,audio] = CreateFocusSpectrogram(call,handles, make_spectrogram,options, audioReader)
 %% Extract call features for CalculateStats and display
 
 
@@ -6,7 +6,7 @@ if nargin < 3
     make_spectrogram = true;
 end
 
-if nargin < 4
+if nargin < 4 || isempty(options)
     options = struct;
     options.frequency_padding = 0;
     options.nfft = 0.0032;
@@ -17,13 +17,13 @@ end
 rate = call.Rate;
 box = call.Box;
 
-if ~isfield(handles,'current_focus_position')
-    handles.current_focus_position = [];
-end
-
-if ~isempty(handles.current_focus_position) & handles.current_focus_position(1) < 0
-    handles.current_focus_position(1) = 0;
-end
+% if ~isfield(handles,'current_focus_position')
+%     handles.current_focus_position = [];
+% end
+% 
+% if ~isempty(handles.current_focus_position) & handles.current_focus_position(1) < 0
+%     handles.current_focus_position(1) = 0;
+% end
 
 %
 % call_box_in_samples = round(handles.data.audiodata.SampleRate*box);
@@ -51,12 +51,7 @@ noverlap = round(rate * options.overlap);
 nfft = round(rate * options.nfft);
 
 if make_spectrogram
-    audio = handles.data.AudioSamples(box(1), box(1) + box(3));
-    if ~isfloat(audio)
-        audio = double(audio) / (double(intmax(class(audio)))+1);
-    elseif ~isa(audio,'double')
-        audio = double(audio);
-    end
+    audio = audioReader.AudioSamples(box(1), box(1) + box(3));
     [s, fr, ti] = spectrogram(audio,windowsize,noverlap,nfft,rate,'yaxis');
 else
 %     s  = handles.data.page_spect.s;
@@ -71,21 +66,8 @@ end
     
 
 %% Get the part of the spectrogram within the box
-rel_pos_start = 0;
-rel_pos_stop = 1;
-
-
-x1 = max(round(length(ti)*rel_pos_start),1);
-
-x2 = min( length(ti),round(length(ti)*rel_pos_stop));
-if isempty(x2)
-    x2=length(ti);
-end
-
-if ~isempty(handles.current_focus_position)
-    x1 = 1;
-    x2=length(ti);
-end
+x1 = 1;
+x2 = length(ti);
 
 y1=find(fr./1000>=round(call.Box(2)-options.frequency_padding),1);
 max_freq = round(call.Box(2)+call.Box(4)+options.frequency_padding);

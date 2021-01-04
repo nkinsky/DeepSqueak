@@ -30,14 +30,13 @@ stats.DeltaTime = [];
 %% For Each File
 for j = 1:length(fileName)
     file = load(fullfile(filePath,fileName{j}));
-    [Calls,audiodata,loaded_ClusteringData] = loadCallfile(fullfile(filePath,fileName{j}),handles);
+    audioReader = squeakData([]);
+    [Calls,  audioReader.audiodata,loaded_ClusteringData] = loadCallfile(fullfile(filePath,fileName{j}),handles);
     
 %     if isfield(audiodata,'AudioFile')
 %         errordlg(sprintf('File %s not found in folder %s',fileName{j},filePath ),'Audio File Error');
 %     end
-    
-    handles.data.audiodata = audiodata;
-    
+        
     % If the files is extracted contours, rather than a detection file
     if forClustering & ~isempty(loaded_ClusteringData)
         ClusteringData = [ClusteringData; loaded_ClusteringData];
@@ -54,7 +53,7 @@ for j = 1:length(fileName)
             
             call = Calls(i,:);
             
-            [I,wind,noverlap,nfft,rate,box,~] = CreateFocusSpectrogram(call,handles,true);
+            [I,wind,noverlap,nfft,rate,box,~] = CreateFocusSpectrogram(call, handles, true, [], audioReader);
             im = mat2gray(flipud(I),[0 max(max(I))/4]); % Set max brightness to 1/4 of max
             
             if forClustering

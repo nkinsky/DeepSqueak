@@ -14,7 +14,7 @@ if handles.data.lastWindowPosition ~= handles.data.windowposition || force_rende
     nfft = round(handles.data.audiodata.SampleRate * 0.032);
     
     % Get audio within the page range, padded by focus window size
-    window_start = handles.data.windowposition - handles.data.settings.focus_window_size/2;
+    window_start = max(handles.data.windowposition - handles.data.settings.focus_window_size/2, 0);
     window_stop = handles.data.windowposition + handles.data.settings.windowSize + handles.data.settings.focus_window_size/2;
     audio = handles.data.AudioSamples(window_start, window_stop);
     

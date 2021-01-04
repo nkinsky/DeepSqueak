@@ -71,7 +71,6 @@ classdef squeakData < handle
         end
         
         function samples = AudioSamples(obj, startTime, finalTime)
-            
             startTime = max(startTime, 0);
             startSample = round(startTime*obj.audiodata.SampleRate);
             finalSample = round(finalTime*obj.audiodata.SampleRate);
@@ -80,16 +79,11 @@ classdef squeakData < handle
             finalSample = min(finalSample, obj.audiodata.TotalSamples);
             
             if finalSample > obj.AudioStopSample || startSample < obj.AudioStartSample
-                
                 obj.AudioStartSample = round(obj.audiodata.SampleRate .* startTime);
                 obj.AudioStartSample = max(obj.AudioStartSample,1);
-                
-                obj.AudioStopSample  = round(obj.audiodata.SampleRate .* (startTime + obj.settings.windowSize .* 3));
+                obj.AudioStopSample  = round(obj.audiodata.SampleRate .* (finalTime));
                 obj.AudioStopSample  = min(obj.AudioStopSample, obj.audiodata.TotalSamples);
-                
                 obj.StoredSamples = audioread(obj.audiodata.Filename, [obj.AudioStartSample, obj.AudioStopSample]);
-%                 disp([obj.AudioStartSample, obj.AudioStopSample])
-                
             end
             
             startSample = startSample - obj.AudioStartSample + 1;
