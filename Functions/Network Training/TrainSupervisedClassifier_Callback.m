@@ -27,7 +27,7 @@ h = waitbar(0,'Initializing');
 X = [];
 Class = [];
 for j = 1:length(trainingdata)  % For Each File
-    [Calls,~,~] = loadCallfile(fullfile(trainingpath, trainingdata{j}),handles);
+    Calls = loadCallfile(fullfile(trainingpath, trainingdata{j}),handles);
 
     Xtemp = [];
     Classtemp = [];

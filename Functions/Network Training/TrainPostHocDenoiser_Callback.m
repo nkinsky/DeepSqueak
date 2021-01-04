@@ -32,7 +32,7 @@ h = waitbar(0,'Initializing');
 TrainingImages = {};
 Class = [];
 for j = 1:length(trainingdata)  % For Each File
-    [Calls,~,~] = loadCallfile([trainingpath trainingdata{j}],handles);
+    Calls = loadCallfile([trainingpath trainingdata{j}],handles);
 
     for i = 1:height(Calls)     % For Each Call
         waitbar(i/height(Calls),h,['Loading File ' num2str(j) ' of '  num2str(length(trainingdata))]);

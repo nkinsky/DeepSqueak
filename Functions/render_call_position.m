@@ -8,7 +8,7 @@ CallTime = handles.data.calls.Box(:,1);
 if all_calls
     line([0 max(CallTime)],[0 0],'LineWidth',1,'Color','w','Parent', handles.detectionAxes);
     line([0 max(CallTime)],[1 1],'LineWidth',1,'Color','w','Parent', handles.detectionAxes);
-    set(handles.detectionAxes,'XLim',[0 handles.data.audiodata.duration]);
+    set(handles.detectionAxes,'XLim',[0 handles.data.audiodata.Duration]);
     set(handles.detectionAxes,'YLim',[0 1]);
     
     set(handles.detectionAxes,'Color',[.1 .1 .1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','on','Clim',[0 1]);
@@ -24,7 +24,7 @@ if all_calls
     cla(handles.detectionAxes);
     
     screen_size = get(0,'screensize');
-    min_call_render_difference = 2*handles.data.audiodata.duration / (screen_size(3));
+    min_call_render_difference = 2*handles.data.audiodata.Duration / (screen_size(3));
     for i=1:length(CallTime)
         color = [0,1,0];
         

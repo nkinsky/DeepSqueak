@@ -2,13 +2,13 @@ function savesession_Callback(hObject, eventdata, handles)
 
 handles.v_det = get(handles. popupmenuDetectionFiles,'Value');
 if isfield(handles,'current_detection_file')
-handles.SaveFile = handles.detectionfiles(handles.v_det).name;
-handles.SaveFile = handles.current_detection_file;
+    handles.SaveFile = handles.detectionfiles(handles.v_det).name;
+    handles.SaveFile = handles.current_detection_file;
 else
-handles.SaveFile = handles.detectionfiles(handles.v_det).name;
+    handles.SaveFile = handles.detectionfiles(handles.v_det).name;
 end
 
-temp = handles.data.audiodata.samples; 
+temp = handles.data.audiodata.samples;
 handles.data.audiodata.samples = [];
 guidata(hObject, handles);
 

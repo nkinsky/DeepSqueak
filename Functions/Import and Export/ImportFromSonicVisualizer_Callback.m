@@ -51,12 +51,7 @@ end
 [~, box_file_name] = fileparts(svname);
 [~, audio_file_name] = fileparts(audioname);
 
-[samples, duration,sample_rate] = loadAudioData([audiopath audioname]);
-
-audiodata.samples = samples;
-audiodata.duration = duration;
-audiodata.sample_rate = sample_rate;
-audiodata.AudioFile = audioname;
+audiodata = audioinfo(fullfile(audiopath, audioname));
 
 % FileName = [audio_file_name, datestr(datetime('now'),'mmm-dd-yyyy hh_MM AM'), ' ',box_file_name, '.mat'];
 % FilePath = [handles.data.settings.detectionfolder, FileName];

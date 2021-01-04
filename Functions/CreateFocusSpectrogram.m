@@ -33,9 +33,9 @@ windowsize_value =  get(handles.focusWindowSizePopup,'String');
 seconds = regexp(windowsize_value{padding_value_index},'([\d*.])*','match');
 seconds = str2num(seconds{1});
 
-window_width = round(handles.data.audiodata.sample_rate*seconds);
+window_width = round(handles.data.audiodata.SampleRate*seconds);
 
-call_box_in_samples = round( handles.data.audiodata.sample_rate*box);
+call_box_in_samples = round( handles.data.audiodata.SampleRate*box);
 call_box_start = call_box_in_samples(1);
 call_box_end = call_box_in_samples(1) + call_box_in_samples(3);
 call_box_width = call_box_in_samples(3);
@@ -51,7 +51,7 @@ window_start = max(call_box_start -call_box_offset,1);
 window_stop = min(call_box_end + call_box_offset, length(handles.data.audiodata.samples));
 
 if window_start == 1
-    window_stop = window_start + seconds* handles.data.audiodata.sample_rate;
+    window_stop = window_start + seconds* handles.data.audiodata.SampleRate;
 elseif window_start > window_stop
    warning('Callbox extends beyond audio duration.');
    window_start = window_stop -  window_width;

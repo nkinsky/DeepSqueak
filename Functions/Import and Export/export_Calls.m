@@ -28,7 +28,7 @@ t_merged = [];
 hc = waitbar(0,'Initializing');
 for j = 1:length(fname) % Do this for each file
     currentfile = fullfile(fpath,fname{j});
-    [Calls,audiodata,~] = loadCallfile(currentfile,handles);
+    [Calls, audiodata] = loadCallfile(currentfile,handles);
     
     % Name the output file. If the file already exists, delete it so that
     % writetable overwrites the data instead of appending it to the table.    

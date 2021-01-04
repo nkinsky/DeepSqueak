@@ -319,7 +319,7 @@ function axes1_CreateFcn(hObject, eventdata, handles)
 function slide_focus(focus_offset, hObject, eventdata, handles)
 % Move the focus window one unit over
 new_position = handles.data.focusCenter + focus_offset;
-new_position = min(new_position, handles.data.audiodata.duration - handles.data.settings.focus_window_size ./ 2);
+new_position = min(new_position, handles.data.audiodata.Duration - handles.data.settings.focus_window_size ./ 2);
 new_position = max(new_position, handles.data.settings.focus_window_size ./ 2);
 handles.data.focusCenter = new_position;
 
@@ -409,16 +409,16 @@ current_box = drawrectangle( 'Parent',handles.axes1,...
                             'FaceAlpha',0,...
                             'LineWidth',1 );
   
-audio_start = handles.data.audiodata.sample_rate*current_box.Position(1);
-audio_stop = handles.data.audiodata.sample_rate*(current_box.Position(1) + current_box.Position(3) );
+audio_start = handles.data.audiodata.SampleRate*current_box.Position(1);
+audio_stop = handles.data.audiodata.SampleRate*(current_box.Position(1) + current_box.Position(3) );
 audio_start = round(max(audio_start,1));
 audio_stop = found(min(audio_stop,size(handles.data.audiodata.samples,1)));
 audio = handles.data.audiodata.samples(audio_start:audio_stop);
 audio = audio - mean(audio,1);
 new_tag = max(handles.data.calls.Tag) + 1;
-new_box = {handles.data.audiodata.sample_rate, current_box.Position, [0,0,0,0], 0, audio,0,0,1,new_tag };
+new_box = {handles.data.audiodata.SampleRate, current_box.Position, [0,0,0,0], 0, audio,0,0,1,new_tag };
 new_box = table();
-new_box.Rate = handles.data.audiodata.sample_rate;
+new_box.Rate = handles.data.audiodata.SampleRate;
 new_box.Box = current_box.Position;
 new_box.RelBox = calculateRelativeBox(current_box.Position, handles.axes1);
 new_box.Score = 1;
@@ -798,9 +798,9 @@ update_fig(hObject, eventdata, handles);
 
 % --- Executes on button press in forwardButton.
 function forwardButton_Callback(hObject, eventdata, handles)
-% handles.data.windowposition = min(handles.data.audiodata.duration - handles.data.settings.windowSize, handles.data.windowposition + handles.data.settings.windowSize);
+% handles.data.windowposition = min(handles.data.audiodata.Duration - handles.data.settings.windowSize, handles.data.windowposition + handles.data.settings.windowSize);
 handles.data.focusCenter = handles.data.windowposition + handles.data.settings.windowSize + handles.data.settings.focus_window_size ./ 2;
-handles.data.focusCenter = min(handles.data.focusCenter, handles.data.audiodata.duration - handles.data.settings.focus_window_size ./ 2);
+handles.data.focusCenter = min(handles.data.focusCenter, handles.data.audiodata.Duration - handles.data.settings.focus_window_size ./ 2);
 
 jumps = floor(handles.data.focusCenter / handles.data.settings.windowSize);
 handles.data.windowposition = jumps*handles.data.settings.windowSize;
@@ -928,7 +928,7 @@ if nargin == 3 % if "Load Calls" button pressed
 end
 
 % try
-info = audioinfo(fullfile(handles.data.settings.audiofolder,handles.current_audio_file));
+audio_info = audioinfo(fullfile(handles.data.settings.audiofolder,handles.current_audio_file));
 
 Calls = table('Size',[1, 8], 'VariableTypes',...
     {'double',...
@@ -949,7 +949,7 @@ Calls = table('Size',[1, 8], 'VariableTypes',...
     'Power',...
     'Accept'});
 
-Calls.Rate=info.SampleRate;
+Calls.Rate=audio_info.SampleRate;
 Calls.Box=[0 0 1 1];
 Calls.RelBox=[0 0 1 1];
 Calls.Score=0;
@@ -963,11 +963,7 @@ if  ~tag_column_exists
     handles.data.calls.Tag =  [1:size(handles.data.calls,1)]';
 end
 
-handles.data.audiodata = [];
-audiodata = struct;
-handles.data.audiodata = loadAudioData(handles.data.settings.audiofolder,handles.current_audio_file,audiodata);
-handles.data.audiodata.duration = info.Duration;
-handles.data.audiodata.AudioFile = handles.current_audio_file;
+handles.data.audiodata = audio_info;
 
 guidata(hObject, handles);
 initialize_display(hObject, eventdata, handles);

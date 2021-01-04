@@ -16,7 +16,7 @@ if nargin == 3
 
     inputfile = fullfile(audiopath, audioname);
     hc = waitbar(0,'Loading File');
-    [Calls,~,~] = loadCallfile([trainingpath trainingdata],handles);
+    Calls = loadCallfile([trainingpath trainingdata],handles);
 
 end
 

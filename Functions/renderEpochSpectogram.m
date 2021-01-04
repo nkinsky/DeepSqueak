@@ -9,21 +9,21 @@ function  renderEpochSpectogram(hObject, handles, force_render)
 % only remake the spectrogram is the page window changed
 if handles.data.lastWindowPosition ~= handles.data.windowposition || force_render
     handles.data.lastWindowPosition = handles.data.windowposition;
-    windowsize = round(handles.data.audiodata.sample_rate * 0.0032);
-    noverlap = round(handles.data.audiodata.sample_rate * 0.0016);
-    nfft = round(handles.data.audiodata.sample_rate * 0.032);
+    windowsize = round(handles.data.audiodata.SampleRate * 0.0032);
+    noverlap = round(handles.data.audiodata.SampleRate * 0.0016);
+    nfft = round(handles.data.audiodata.SampleRate * 0.032);
     
     % Get audio within the page range, padded by focus window size
     window_start = handles.data.windowposition - handles.data.settings.focus_window_size/2;
-    window_start = round(max(window_start * handles.data.audiodata.sample_rate, 1));
+    window_start = round(max(window_start * handles.data.audiodata.SampleRate, 1));
   
     window_stop = handles.data.windowposition + handles.data.settings.windowSize + handles.data.settings.focus_window_size/2;
-    window_stop = round(min(window_stop * handles.data.audiodata.sample_rate, length(handles.data.audiodata.samples)));
+    window_stop = round(min(window_stop * handles.data.audiodata.SampleRate, length(handles.data.audiodata.samples)));
     audio = handles.data.audiodata.samples(window_start:window_stop);
     
     % Make the spectrogram
-    [zoomed_s, zoomed_f, zoomed_t] = spectrogram(audio,windowsize,noverlap,nfft,handles.data.audiodata.sample_rate,'yaxis');
-    zoomed_t = zoomed_t + window_start/handles.data.audiodata.sample_rate; % Add the start of the window the time units
+    [zoomed_s, zoomed_f, zoomed_t] = spectrogram(audio,windowsize,noverlap,nfft,handles.data.audiodata.SampleRate,'yaxis');
+    zoomed_t = zoomed_t + window_start/handles.data.audiodata.SampleRate; % Add the start of the window the time units
     zoomed_s = scaleSpectogram(zoomed_s, hObject, handles);
     
     % Plot Spectrogram in the page view
@@ -49,7 +49,7 @@ end
 
 set(handles.spectogramWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
 set(handles.spectogramWindow,'Parent',handles.hFig);
-set(handles.spectogramWindow, 'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.sample_rate/2000)]);
+set(handles.spectogramWindow, 'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.SampleRate/2000)]);
 set_tick_timestamps(handles.spectogramWindow, 1);
 
 

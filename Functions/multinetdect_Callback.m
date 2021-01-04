@@ -93,20 +93,8 @@ for j = 1:length(audioselections)
     Calls = Automerge_Callback(Calls, [], AudioFile);
     
     %% Save the file
+    % Save the Call table, detection metadata, and results of audioinfo
     
-    audiodata = struct;
-    
-    info = audioinfo(AudioFile);
-    audiodata.duration = info.Duration;
-    
-    [y,Fs] = audioread(AudioFile);
-    t = 0:seconds(1/Fs):seconds(info.Duration);
-    t = t(1:end-1);    
-
-    
-    AudioFile = strsplit(AudioFile,filesep);
-    audiodata.AudioFile = AudioFile{end};
-   
     % Append date to filename
     if Settings(7)
         fname = fullfile(handles.data.settings.detectionfolder,[audioname ' ' detectiontime '.mat']);
@@ -118,7 +106,12 @@ for j = 1:length(audioselections)
     fprintf(1,'%d Calls found in: %s \n',height(Calls),audioname)
     
     if ~isempty(Calls)
-        save(fname,'Calls','Settings','AudioFile','detectiontime','networkselections','audiodata','-v7.3','-mat');
+        detection_metadata = struct(...
+            'Settings', Settings,...
+            'detectiontime', detectiontime,...
+            'networkselections', {handles.networkfiles(networkselections).name});
+        audiodata = audioinfo(AudioFile);
+        save(fname,'Calls', 'detection_metadata', 'audiodata' ,'-v7.3', '-mat');
     end
     
     delete(h)

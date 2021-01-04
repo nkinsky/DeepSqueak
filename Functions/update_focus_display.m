@@ -29,7 +29,7 @@ set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 g
 % set(handles.spect,'CData',(scaleSpectogram(s_f)),'XData', ti_f,'YData',fr_f/1000);
 set(handles.axes1,'Parent',handles.hFig);
 set(handles.axes1,'Xlim', [handles.current_focus_position(1), handles.current_focus_position(1) + handles.current_focus_position(3)]);
-set(handles.axes1,'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.sample_rate/2000)]);
+set(handles.axes1,'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.SampleRate/2000)]);
 
 %Update spectogram ticks and transform labels to
 %minutes:seconds.milliseconds
@@ -77,7 +77,7 @@ set(handles.tonalitytext,'String',['Avg. Tonality: ' num2str(stats.SignalToNoise
 
 % Waveform
 PlotAudio = audio_f(max(AudioRange_f(1),1):AudioRange_f(2));
-% PlotAudio = highpass(PlotAudio, box_f(4)*500, handles.data.audiodata.sample_rate);
+% PlotAudio = highpass(PlotAudio, box_f(4)*500, handles.data.audiodata.SampleRate);
 % set(handles.Waveform,...
 %     'XData', length(stats.Entropy) * ((1:length(PlotAudio)) / length(PlotAudio)),...
 %     'YData', 0.5 .* PlotAudio ./ max(PlotAudio) - 0.5)

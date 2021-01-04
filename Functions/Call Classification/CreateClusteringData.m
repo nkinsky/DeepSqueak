@@ -32,9 +32,9 @@ for j = 1:length(fileName)
     file = load(fullfile(filePath,fileName{j}));
     [Calls,audiodata,loaded_ClusteringData] = loadCallfile(fullfile(filePath,fileName{j}),handles);
     
-    if isfield(audiodata,'AudioFile') & ~audiodata.AudioFile
-        errordlg(sprintf('File %s not found in folder %s',fileName{j},filePath ),'Audio File Error');
-    end
+%     if isfield(audiodata,'AudioFile')
+%         errordlg(sprintf('File %s not found in folder %s',fileName{j},filePath ),'Audio File Error');
+%     end
     
     handles.data.audiodata = audiodata;
     

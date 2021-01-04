@@ -86,7 +86,7 @@ colormap(handles.spectogramWindow,handles.data.cmap);
 
 callPositionAxesXLim = xlim(handles.detectionAxes);
 callPositionAxesXLim(1) = 0;
-callPositionAxesXLim(2) = handles.data.audiodata.duration;
+callPositionAxesXLim(2) = handles.data.audiodata.Duration;
 xlim(handles.detectionAxes,callPositionAxesXLim);
 
 % Rectangle that shows the current position in the spectrogram

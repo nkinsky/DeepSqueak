@@ -10,7 +10,7 @@ end
 
 handles.data.calls = [];
 handles.data.audiodata = [];
-[handles.data.calls, handles.data.audiodata, ~] = loadCallfile(fullfile(handles.detectionfiles(handles.current_file_id).folder,  handles.current_detection_file), handles);
+[handles.data.calls, handles.data.audiodata] = loadCallfile(fullfile(handles.detectionfiles(handles.current_file_id).folder,  handles.current_detection_file), handles);
 
 tag_column_exists = strcmp('Tag',handles.data.calls.Properties.VariableNames);
 if  ~tag_column_exists

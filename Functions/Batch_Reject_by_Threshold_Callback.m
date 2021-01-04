@@ -83,7 +83,7 @@ rules(:,1) = num2cell(contains(rules(:,1),'Accept'));
 %% Loop
 h = waitbar(0,'Initializing');
 for currentfile = selections % Do this for each file
-    [Calls, ~,~] = loadCallfile(fullfile(handles.detectionfiles(currentfile).folder, handles.detectionfiles(currentfile).name),handles);
+    Calls = loadCallfile(fullfile(handles.detectionfiles(currentfile).folder, handles.detectionfiles(currentfile).name),handles);
 
 
     reject = false(height(Calls),1);

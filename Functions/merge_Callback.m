@@ -31,7 +31,7 @@ AllPower = [];
 AllAccept = [];
 
 for j = 1:length(detectionFilename)
-    [Calls,~,~] = loadCallfile(fullfile(detectionFilepath, detectionFilename{j}),handles);
+    Calls = loadCallfile(fullfile(detectionFilepath, detectionFilename{j}),handles);
 
     AllBoxes = [AllBoxes; Calls.Box];
     AllScores = [AllScores; Calls.Score];

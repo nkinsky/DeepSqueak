@@ -9,8 +9,8 @@ function  roiMovedCallback(rectangle,evt)
         handles.data.calls{i,'Box'} = rectangle.Position;
         handles.data.calls{i,'RelBox'} = calculateRelativeBox(rectangle.Position, handles.axes1);         
 
-        audio_start = handles.data.audiodata.sample_rate*rectangle.Position(1);
-        audio_stop = handles.data.audiodata.sample_rate*(rectangle.Position(1) +1*rectangle.Position(3));
+        audio_start = handles.data.audiodata.SampleRate*rectangle.Position(1);
+        audio_stop = handles.data.audiodata.SampleRate*(rectangle.Position(1) +1*rectangle.Position(3));
 
         audio_start = max(audio_start,1);
         audio_stop = min(audio_stop,size(handles.data.audiodata.samples,1));
