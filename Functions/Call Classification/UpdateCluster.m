@@ -24,7 +24,7 @@ rejected(clustAssign == 'Noise') = 1;
 
 for i = 1:length(files)
 
-    [Calls, audiodata] = loadCallfile(files{i},[]);
+    Calls = loadCallfile(files{i},[]);
 
     % Find the index of the clustering data that belongs to the file
     cluster_idx = find(file_idx == i);
@@ -39,7 +39,7 @@ for i = 1:length(files)
     Calls.Accept(call_idx(rejected(cluster_idx))) = 0;
 
     waitbar(i/length(files),h,['Saving File ' num2str(i) ' of '  num2str(length(files))]);
-    save(files{i},'Calls','audiodata','-v7.3');
+    save(files{i},'Calls', '-append');
 
 end
 close(h)

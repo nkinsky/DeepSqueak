@@ -79,5 +79,5 @@ if nargout > 1
         disp('Saving call file with updated audio')
         save(filename, 'audiodata', '-append');
     end
-    audiodata.samples = audioread(audiodata.Filename);
+%     audiodata.samples = audioread(audiodata.Filename);
 end

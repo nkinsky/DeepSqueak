@@ -15,17 +15,16 @@ function epoch_window_Callback(hObject, eventdata, handles)
     handles.data.focusCenter = click_position(1);
     
     %% Find the call closest to the click and make it the current call
-    calls_within_window = find(...
-        handles.data.calls.Box(:,1) > handles.data.windowposition &...
-        sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize);
+%     calls_within_window = find(...
+%         handles.data.calls.Box(:,1) > handles.data.windowposition &...
+%         sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize);
     
-    if ~isempty(calls_within_window)
-        callMidpoints = handles.data.calls.Box(calls_within_window,1) + handles.data.calls.Box(calls_within_window,3)/2;
+        callMidpoints = handles.data.calls.Box(:,1) + handles.data.calls.Box(:,3)/2;
         [~, closestCall] = min(abs(callMidpoints - handles.data.focusCenter));
-        handles.data.currentcall = calls_within_window(closestCall);
-        handles.data.current_call_valid = true;
+        handles.data.currentcall = closestCall;
+%         handles.data.current_call_valid = true;
         handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-    end
+%     end
     update_fig(hObject, eventdata, handles);
     guidata(hObject, handles);
     

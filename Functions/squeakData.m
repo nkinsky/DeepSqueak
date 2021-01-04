@@ -9,6 +9,7 @@ classdef squeakData < handle
         cmap = 'inferno'
         cmapName = {'inferno'}
         settings = struct()
+        defaultSettings = struct()
         squeakfolder
         audiodata
         % Keyboard shortcuts for labelling calls
@@ -16,31 +17,32 @@ classdef squeakData < handle
         page_spect = struct() % spectrogram of the page view
         focusCenter = 0; % center of the current focus window
     end
+    properties (Access = private)
+        AudioStartSample = 0;
+        AudioStopSample = 0;
+        StoredSamples = [];
+        SamplesToRead = 192000 .* 10;
+    end
+    
     methods
         function obj = squeakData(squeakfolder)
             obj.squeakfolder = squeakfolder;
-            createSettings(obj);
-        end
-        
-        function obj = createSettings(obj)
-            % Check if the settings file exists. Create it if it doesn't.
-            if exist(fullfile(obj.squeakfolder,'settings.mat'), 'file') ~= 2
-                obj.settings.detectionfolder = fullfile(obj.squeakfolder, 'Detections/');
-                obj.settings.networkfolder = fullfile(obj.squeakfolder, 'Networks/');
-                obj.settings.audiofolder = fullfile(obj.squeakfolder, 'Audio/');
-                obj.settings.detectionSettings = {'0' '6' '.1' '100' '18' '0' '1'};
-                obj.settings.playback_rate = 0.05;
-                obj.settings.LowFreq = 15;
-                obj.settings.HighFreq = 115;
-                obj.settings.AmplitudeThreshold = 0;
-                obj.settings.EntropyThreshold = 0.3;
-                obj.settings.labels = {'FF','FM','Trill','Split',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-                obj.settings.windowSize = 1;
-                obj.settings.spectogram_ticks = 11;
-                obj.settings.focus_window_size = 0.5;
-                disp('Settings file not found. Create a new one...')
-                saveSettings(obj)
-            end
+            
+            obj.defaultSettings = struct();
+            obj.defaultSettings.detectionfolder = fullfile(obj.squeakfolder, 'Detections/');
+            obj.defaultSettings.networkfolder = fullfile(obj.squeakfolder, 'Networks/');
+            obj.defaultSettings.audiofolder = fullfile(obj.squeakfolder, 'Audio/');
+            obj.defaultSettings.detectionSettings = {'0' '6' '.1' '100' '18' '0' '1'};
+            obj.defaultSettings.playback_rate = 0.05;
+            obj.defaultSettings.LowFreq = 15;
+            obj.defaultSettings.HighFreq = 115;
+            obj.defaultSettings.AmplitudeThreshold = 0;
+            obj.defaultSettings.EntropyThreshold = 0.3;
+            obj.defaultSettings.labels = {'FF','FM','Trill','Split',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
+            obj.defaultSettings.windowSize = 1;
+            obj.defaultSettings.spectogram_ticks = 11;
+            obj.defaultSettings.focus_window_size = 0.5;
+            
         end
         
         function saveSettings(obj)
@@ -49,7 +51,50 @@ classdef squeakData < handle
         end
         
         function loadSettings(obj)
+            
+            % Check if the settings file exists. Create it if it doesn't.
+            if ~exist(fullfile(obj.squeakfolder,'settings.mat'), 'file')
+                obj.settings = obj.defaultSettings;
+                disp('Settings file not found. Create a new one...')
+                saveSettings(obj)
+            end
+            
             obj.settings = load(fullfile(obj.squeakfolder, 'settings.mat'));
+            
+            % Add any missing settings
+            missingSettings = setdiff(fieldnames(obj.defaultSettings), fieldnames(obj.settings));
+            for i = missingSettings'
+                obj.settings = setfield(obj.settings, i{:}, getfield(obj.defaultSettings,i{:}));
+            end
+            
+            
+        end
+        
+        function samples = AudioSamples(obj, startTime, finalTime)
+            
+            startTime = max(startTime, 0);
+            startSample = round(startTime*obj.audiodata.SampleRate);
+            finalSample = round(finalTime*obj.audiodata.SampleRate);
+            
+            startSample = max(startSample, 1);
+            finalSample = min(finalSample, obj.audiodata.TotalSamples);
+            
+            if finalSample > obj.AudioStopSample || startSample < obj.AudioStartSample
+                
+                obj.AudioStartSample = round(obj.audiodata.SampleRate .* startTime);
+                obj.AudioStartSample = max(obj.AudioStartSample,1);
+                
+                obj.AudioStopSample  = round(obj.audiodata.SampleRate .* (startTime + obj.settings.windowSize .* 3));
+                obj.AudioStopSample  = min(obj.AudioStopSample, obj.audiodata.TotalSamples);
+                
+                obj.StoredSamples = audioread(obj.audiodata.Filename, [obj.AudioStartSample, obj.AudioStopSample]);
+%                 disp([obj.AudioStartSample, obj.AudioStopSample])
+                
+            end
+            
+            startSample = startSample - obj.AudioStartSample + 1;
+            finalSample = finalSample - obj.AudioStartSample;
+            samples = obj.StoredSamples(startSample:finalSample);
         end
         
     end

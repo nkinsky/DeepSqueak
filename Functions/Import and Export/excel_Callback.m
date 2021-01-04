@@ -8,8 +8,7 @@ function excel_Callback(hObject, eventdata, handles)
 
             if includereject || Calls.Accept(i)
                 
-                call_box_in_samples = round( handles.data.audiodata.SampleRate*Calls(i, :).Box);
-                if call_box_in_samples(1) > length(handles.data.audiodata.samples)
+                if Calls.Box(1) + Calls.Box(3) > length(handles.data.audiodata.Duration)
                    warning(sprintf('Call box start beyond audio duration. Skipping call %i in file %s',i,call_file)); 
                    continue;
                 end

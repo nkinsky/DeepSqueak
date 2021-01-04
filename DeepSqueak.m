@@ -409,14 +409,10 @@ current_box = drawrectangle( 'Parent',handles.axes1,...
                             'FaceAlpha',0,...
                             'LineWidth',1 );
   
-audio_start = handles.data.audiodata.SampleRate*current_box.Position(1);
-audio_stop = handles.data.audiodata.SampleRate*(current_box.Position(1) + current_box.Position(3) );
-audio_start = round(max(audio_start,1));
-audio_stop = found(min(audio_stop,size(handles.data.audiodata.samples,1)));
-audio = handles.data.audiodata.samples(audio_start:audio_stop);
+audio = handles.data.AudioSamples(current_box.Position(1), current_box.Position(1) + current_box.Position(3));
 audio = audio - mean(audio,1);
 new_tag = max(handles.data.calls.Tag) + 1;
-new_box = {handles.data.audiodata.SampleRate, current_box.Position, [0,0,0,0], 0, audio,0,0,1,new_tag };
+% new_box = {handles.data.audiodata.SampleRate, current_box.Position, [0,0,0,0], 0, audio,0,0,1,new_tag };
 new_box = table();
 new_box.Rate = handles.data.audiodata.SampleRate;
 new_box.Box = current_box.Position;

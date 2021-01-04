@@ -26,11 +26,8 @@ if round(start_sec,n_decimals) ~= current_box(1) | stop_sec ~= current_box(1) + 
        return; 
     end
     
-    audio_start = max(round(start_sec*handles.data.audiodata.SampleRate),1);
-    audio_stop = min(round(stop_sec*handles.data.audiodata.SampleRate), length(handles.data.audiodata.samples));
-    
-    audio = handles.data.audiodata.samples(audio_start:audio_stop);
-    audio = [mean(audio - mean(audio,1) ,2)]; 
+    audio = handles.data.AudioSamples(start_sec,stop_sec);
+    audio = mean(audio - mean(audio,1) ,2); 
     
 else
     audio = handles.data.calls.Audio{handles.data.currentcall};  

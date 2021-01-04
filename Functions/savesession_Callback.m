@@ -8,8 +8,8 @@ else
     handles.SaveFile = handles.detectionfiles(handles.v_det).name;
 end
 
-temp = handles.data.audiodata.samples;
-handles.data.audiodata.samples = [];
+% temp = handles.data.audiodata.samples;
+% handles.data.audiodata.samples = [];
 guidata(hObject, handles);
 
 Calls = handles.data.calls;
@@ -22,7 +22,7 @@ h = waitbar(0.5, 'saving');
 
 
 save(fullfile(PathName, FileName), 'Calls','audiodata', '-v7.3');
-handles.data.audiodata.samples = temp;
+% handles.data.audiodata.samples = temp;
 update_folders(hObject, eventdata, handles);
 guidata(hObject, handles);
 close(h);
