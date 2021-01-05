@@ -39,7 +39,7 @@ classdef squeakData < handle
             obj.defaultSettings.AmplitudeThreshold = 0;
             obj.defaultSettings.EntropyThreshold = 0.3;
             obj.defaultSettings.labels = {'FF','FM','Trill','Split',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-            obj.defaultSettings.windowSize = 1;
+            obj.defaultSettings.pageSize = 1; % Size of page view in seconds
             obj.defaultSettings.spectogram_ticks = 11;
             obj.defaultSettings.focus_window_size = 0.5;
             

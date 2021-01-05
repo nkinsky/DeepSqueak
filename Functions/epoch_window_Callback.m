@@ -18,7 +18,7 @@ function epoch_window_Callback(hObject, eventdata)
     %% Find the call closest to the click and make it the current call
 %     calls_within_window = find(...
 %         handles.data.calls.Box(:,1) > handles.data.windowposition &...
-%         sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize);
+%         sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.pageSize);
     
         callMidpoints = handles.data.calls.Box(:,1) + handles.data.calls.Box(:,3)/2;
         [~, closestCall] = min(abs(callMidpoints - handles.data.focusCenter));

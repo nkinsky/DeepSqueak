@@ -20,8 +20,8 @@ guidata(hObject, handles);
 
 
 %% Update the position of the page window by using focus position
-jumps = floor(handles.data.focusCenter / handles.data.settings.windowSize);
-handles.data.windowposition = jumps*handles.data.settings.windowSize;
+jumps = floor(handles.data.focusCenter / handles.data.settings.pageSize);
+handles.data.windowposition = jumps*handles.data.settings.pageSize;
 
 
 %% Plot Call Position (updates the little bar with the green lines)

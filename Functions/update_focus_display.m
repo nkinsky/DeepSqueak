@@ -30,7 +30,7 @@ set_tick_timestamps(handles.axes1, true);
 
 % Don't update the call info the there aren't any calls
 if ~any(handles.data.calls.Box(handles.data.currentcall,1) > handles.data.windowposition &...
-        sum(handles.data.calls.Box(handles.data.currentcall,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize)
+        sum(handles.data.calls.Box(handles.data.currentcall,[1,3]),2) < handles.data.windowposition + handles.data.settings.pageSize)
     return
 end
 

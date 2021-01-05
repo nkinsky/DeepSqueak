@@ -186,7 +186,7 @@ set(handles.TonalitySlider, 'Value', handles.data.settings.EntropyThreshold);
 dropdown_items = cellstr(get(handles.epochWindowSizePopup,'String'));
 dropdown_items = regexprep(dropdown_items, '[^0-9.]', ' ');
 dropdown_items = str2double(dropdown_items);
-set(handles.epochWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.windowSize))
+set(handles.epochWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.pageSize))
 
 dropdown_items = cellstr(get(handles.focusWindowSizePopup,'String'));
 dropdown_items = regexprep(dropdown_items, '[^0-9.]', ' ');
@@ -243,7 +243,7 @@ soundsc(audio,playbackRate);
 
 %Set the default sizes for epoch and focus windows
 % handles.data.settings.focus_window_size = 0.5;
-% handles.data.settings.windowSize = 2;
+% handles.data.settings.pageSize = 2;
 % handles.data.settings.spectogram_ticks = 11;
 
 % guidata(hObject, handles);
@@ -321,7 +321,7 @@ new_position = min(new_position, handles.data.audiodata.Duration - handles.data.
 new_position = max(new_position, handles.data.settings.focus_window_size ./ 2);
 handles.data.focusCenter = new_position;
 
-if new_position >= handles.data.windowposition + handles.data.settings.windowSize
+if new_position >= handles.data.windowposition + handles.data.settings.pageSize
     forwardButton_Callback(hObject, eventdata, handles);
 elseif new_position < handles.data.windowposition
     backwardButton_Callback(hObject, eventdata, handles);
@@ -773,14 +773,14 @@ hObject.Value = round(hObject.Value);
 
 % --- Executes on button press in backwardButton.
 function backwardButton_Callback(hObject, eventdata, handles)
-% handles.data.windowposition = max(0, handles.data.windowposition - handles.data.settings.windowSize);
+% handles.data.windowposition = max(0, handles.data.windowposition - handles.data.settings.pageSize);
 handles.data.focusCenter = max(0, handles.data.windowposition - handles.data.settings.focus_window_size ./ 2);
 % get_closest_call_to_focus(hObject, eventdata, handles);
 
-jumps = floor(handles.data.focusCenter / handles.data.settings.windowSize);
-handles.data.windowposition = jumps*handles.data.settings.windowSize;
+jumps = floor(handles.data.focusCenter / handles.data.settings.pageSize);
+handles.data.windowposition = jumps*handles.data.settings.pageSize;
 
-calls_within_window = find(handles.data.calls.Box(:,1) < handles.data.windowposition + handles.data.settings.windowSize, 1, 'last');
+calls_within_window = find(handles.data.calls.Box(:,1) < handles.data.windowposition + handles.data.settings.pageSize, 1, 'last');
 if ~isempty(calls_within_window)
     handles.data.currentcall = calls_within_window;
     handles.data.current_call_valid = true;
@@ -792,12 +792,12 @@ update_fig(hObject, eventdata, handles);
 
 % --- Executes on button press in forwardButton.
 function forwardButton_Callback(hObject, eventdata, handles)
-% handles.data.windowposition = min(handles.data.audiodata.Duration - handles.data.settings.windowSize, handles.data.windowposition + handles.data.settings.windowSize);
-handles.data.focusCenter = handles.data.windowposition + handles.data.settings.windowSize + handles.data.settings.focus_window_size ./ 2;
+% handles.data.windowposition = min(handles.data.audiodata.Duration - handles.data.settings.pageSize, handles.data.windowposition + handles.data.settings.pageSize);
+handles.data.focusCenter = handles.data.windowposition + handles.data.settings.pageSize + handles.data.settings.focus_window_size ./ 2;
 handles.data.focusCenter = min(handles.data.focusCenter, handles.data.audiodata.Duration - handles.data.settings.focus_window_size ./ 2);
 
-jumps = floor(handles.data.focusCenter / handles.data.settings.windowSize);
-handles.data.windowposition = jumps*handles.data.settings.windowSize;
+jumps = floor(handles.data.focusCenter / handles.data.settings.pageSize);
+handles.data.windowposition = jumps*handles.data.settings.pageSize;
 
 % handles.data.focusCenter = max(0, handles.data.windowposition - handles.data.settings.focus_window_size ./ 2);
 % get_closest_call_to_focus(hObject, eventdata, handles);
@@ -815,7 +815,7 @@ update_fig(hObject, eventdata, handles);
 function get_closest_call_to_focus(hObject, eventdata, handles)
 calls_within_window = find(...
     handles.data.calls.Box(:,1) > handles.data.windowposition &...
-    sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize);
+    sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.pageSize);
 if ~isempty(calls_within_window)
     callMidpoints = handles.data.calls.Box(calls_within_window,1) + handles.data.calls.Box(calls_within_window,3)/2;
     [~, closestCall] = min(abs(callMidpoints - handles.data.focusCenter));
@@ -834,7 +834,7 @@ function epochWindowSizePopup_CreateFcn(hObject, eventdata, handles)
 padding = cellstr(get(hObject,'String')); 
 seconds = regexp(padding{get(hObject,'Value')},'([\d*.])*','match');
 seconds = str2num(seconds{1});
-handles.data.settings.windowSize = seconds;
+handles.data.settings.pageSize = seconds;
 guidata(hObject, handles);
 
 % --- Executes on mouse press over axes background.
@@ -1048,7 +1048,7 @@ function loadcalls_ButtonDownFcn(hObject, eventdata, handles)
 function callBackward_Callback(hObject, eventdata, handles)
 if handles.data.currentcall>1 % If not the first call
     handles.data.currentcall=handles.data.currentcall-1;
-    handles.data.focusCenter = handles.data.windowposition + handles.data.settings.windowSize - handles.data.settings.focus_window_size ./ 2;
+    handles.data.focusCenter = handles.data.windowposition + handles.data.settings.pageSize - handles.data.settings.focus_window_size ./ 2;
     update_fig(hObject, eventdata, handles);
 end
 
