@@ -191,7 +191,7 @@ set(handles.epochWindowSizePopup, 'Value', find(dropdown_items == handles.data.s
 dropdown_items = cellstr(get(handles.focusWindowSizePopup,'String'));
 dropdown_items = regexprep(dropdown_items, '[^0-9.]', ' ');
 dropdown_items = str2double(dropdown_items);
-set(handles.epochWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.focus_window_size))
+set(handles.focusWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.focus_window_size))
     
 guidata(hObject, handles);
 

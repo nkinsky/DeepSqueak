@@ -8,19 +8,23 @@ fr_f = handles.data.page_spect.f;
 
 
 % Plot Spectrogram
-set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
 % set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',prctile(s_f,[1,99.9],'all'))
 
 set(handles.spect,'CData',(scaleSpectogram(s_f)),'XData', ti_f,'YData',fr_f/1000);
-set(handles.axes1,'Xlim', [handles.current_focus_position(1), handles.current_focus_position(1) + handles.current_focus_position(3)]);
-set(handles.axes1,'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.SampleRate/2000)]);
+set(handles.axes1,...
+    'Xlim', [handles.current_focus_position(1), handles.current_focus_position(1) + handles.current_focus_position(3)],...
+    'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.SampleRate/2000)],...
+    'YDir', 'normal',...
+    'YColor',[1 1 1],...
+    'XColor',[1 1 1],...
+    'Clim',[0 get_spectogram_max(hObject,handles)]);
 
 %Update spectogram ticks and transform labels to
 %minutes:seconds.milliseconds
-x_min_max = xlim(handles.axes1);
-x_ticks = linspace(x_min_max(1), x_min_max(2),handles.data.settings.spectogram_ticks);
-xticks(handles.axes1, x_ticks(2:end-1) );
-set_tick_timestamps(handles.axes1,true);
+% x_min_max = xlim(handles.axes1);
+% x_ticks = linspace(x_min_max(1), x_min_max(2),handles.data.settings.spectogram_ticks);
+% xticks(handles.axes1, x_ticks(2:end-1) );
+set_tick_timestamps(handles.axes1, true);
 
 % set(handles.axes1,'ylim',[spectogram_y_lims(1)/1000 spectogram_y_lims(2)/1000]);
 

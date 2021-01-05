@@ -24,13 +24,17 @@ if handles.data.lastWindowPosition ~= handles.data.windowposition || force_rende
     zoomed_s = scaleSpectogram(zoomed_s, hObject, handles);
     
     % Plot Spectrogram in the page view
-    set(handles.epochSpect,'Parent',handles.spectogramWindow);
-    set(handles.epochSpect,'CData',handles.background);
+%     set(handles.epochSpect,'Parent',handles.spectogramWindow);
+%     set(handles.epochSpect,'CData',handles.background);
     
-    set(handles.epochSpect,'Parent',handles.spectogramWindow);
+%     set(handles.epochSpect,'Parent',handles.spectogramWindow);
     set(handles.spectogramWindow, 'Xlim', [handles.data.windowposition, handles.data.windowposition + handles.data.settings.windowSize]);
-    set(handles.epochSpect,'CData',zoomed_s,'XData',  zoomed_t,'YData',zoomed_f/1000);
-    
+    set(handles.epochSpect,'CData',zoomed_s,'XData', zoomed_t, 'YData',zoomed_f/1000);
+%     clim = prctile(zoomed_s(1:20:end, 1:20:end),[1,99],'all');
+%     set(handles.spectogramWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim', clim*2);
+    set_tick_timestamps(handles.spectogramWindow, false);
+
+
 %     % Plot Spectrogram in the focus view
 %     set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
 %     % set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',prctile(s_f,[1,99.9],'all'))
@@ -46,7 +50,6 @@ end
 
 set(handles.spectogramWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
 set(handles.spectogramWindow, 'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.SampleRate/2000)]);
-set_tick_timestamps(handles.spectogramWindow, 1);
 
 
 
