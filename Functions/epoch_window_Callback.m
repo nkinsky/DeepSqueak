@@ -1,17 +1,18 @@
-function epoch_window_Callback(hObject, eventdata, handles)
+function epoch_window_Callback(hObject, eventdata)
     
     handles = guidata(hObject);
-    padding_value_index = get(handles.focusWindowSizePopup,'Value');
-    padding_values =  get(handles.focusWindowSizePopup,'String');
-    seconds = regexp(padding_values{padding_value_index},'([\d*.])*','match');
-    seconds = str2num(seconds{1});
+%     handles.data.settings.focus_window_size
+%     padding_value_index = get(handles.focusWindowSizePopup,'Value');
+%     padding_values =  get(handles.focusWindowSizePopup,'String');
+%     seconds = regexp(padding_values{padding_value_index},'([\d*.])*','match');
+%     seconds = str2num(seconds{1});
 
     click_position = eventdata.IntersectionPoint;
     
-    window_min = click_position(1) - seconds/2;
-    window_max = click_position(1) + seconds/2;    
+%     window_min = click_position(1) - handles.data.settings.focus_window_size/2;
+%     window_max = click_position(1) + handles.data.settings.focus_window_size/2;    
     
-    handles.current_focus_position = [window_min 0 seconds 0 ];
+%     handles.current_focus_position = [window_min 0 seconds 0 ];
     handles.data.focusCenter = click_position(1);
     
     %% Find the call closest to the click and make it the current call

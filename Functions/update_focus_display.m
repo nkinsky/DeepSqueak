@@ -25,8 +25,8 @@ set_tick_timestamps(handles.axes1,true);
 % set(handles.axes1,'ylim',[spectogram_y_lims(1)/1000 spectogram_y_lims(2)/1000]);
 
 % Don't update the call info the there aren't any calls
-if ~any(handles.data.calls.Box(:,1) > handles.data.windowposition &...
-        sum(handles.data.calls.Box(:,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize)
+if ~any(handles.data.calls.Box(handles.data.currentcall,1) > handles.data.windowposition &...
+        sum(handles.data.calls.Box(handles.data.currentcall,[1,3]),2) < handles.data.windowposition + handles.data.settings.windowSize)
     return
 end
 
