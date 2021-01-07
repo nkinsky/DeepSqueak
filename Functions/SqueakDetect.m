@@ -42,7 +42,7 @@ overlap=Settings(3);
 
 % (4) High frequency cutoff (kHz)
 if audio_info.SampleRate < (Settings(4)*1000)*2
-    disp('Warning: Upper Range Above Samplng Frequency');
+    disp('Warning: Upper Range Above Nyquist Frequency');
     HighCutoff=floor(audio_info.SampleRate/2000);
 else
     HighCutoff = Settings(4);
