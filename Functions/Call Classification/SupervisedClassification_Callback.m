@@ -40,13 +40,6 @@ for j = 1:length(selections) % Do this for each file
 
         if Calls.Accept(i)
 
-%             audio =  Calls.Audio{i};
-%             if ~isfloat(audio)
-%                 audio = double(audio) / (double(intmax(class(audio)))+1);
-%             elseif ~isa(audio,'double')
-%                 audio = double(audio);
-%             end
-          
             options.frequency_padding = net.padFreq;
             options.windowsize = net.wind;
             options.overlap = net.noverlap;
@@ -63,7 +56,7 @@ for j = 1:length(selections) % Do this for each file
             Calls.Type(i) = Class;
         end
     end
-    save(fname,'Calls', '-append');
+    save(fname, 'Calls', '-append');
 end
 close(h)
 

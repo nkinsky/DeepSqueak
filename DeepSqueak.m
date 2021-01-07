@@ -233,10 +233,10 @@ audio = handles.data.AudioSamples(...
     handles.data.calls.Box(handles.data.currentcall, 1),...
     handles.data.calls.Box(handles.data.currentcall, 1) + handles.data.calls.Box(handles.data.currentcall, 3));
 
-playbackRate = handles.data.calls.Rate(handles.data.currentcall) * handles.data.settings.playback_rate; % set playback rate
+playbackRate = handles.data.audiodata.SampleRate * handles.data.settings.playback_rate; % set playback rate
 
 % Bandpass Filter
-% audio = bandpass(audio,[handles.data.calls.RelBox(handles.data.currentcall, 2), handles.data.calls.RelBox(handles.data.currentcall, 2) + handles.data.calls.RelBox(handles.data.currentcall, 4)] * 1000,handles.data.calls.Rate(handles.data.currentcall));
+% audio = bandpass(audio,[handles.data.calls.Box(handles.data.currentcall, 2), handles.data.calls.Box(handles.data.currentcall, 2) + handles.data.calls.Box(handles.data.currentcall, 4)] * 1000,handles.data.audiodata.Samplerate));
 % paddedsound = [zeros(3125,1); audio; zeros(3125,1)];
 
 soundsc(audio,playbackRate);
@@ -414,9 +414,7 @@ end
 new_tag = max(handles.data.calls.Tag) + 1;
 % new_box = {handles.data.audiodata.SampleRate, current_box.Position, [0,0,0,0], 0, audio,0,0,1,new_tag };
 new_box = table();
-new_box.Rate = handles.data.audiodata.SampleRate;
 new_box.Box = current_box.Position;
-new_box.RelBox = calculateRelativeBox(current_box.Position, handles.axes1);
 new_box.Score = 1;
 new_box.Type = categorical({'USV'});
 new_box.Power = 0;
@@ -430,10 +428,9 @@ set(current_box,'Color',[0 1 0]);
 %with the existing boxes.
 handles.data.current_call_valid = true;
 SortCalls(hObject, eventdata, handles, 'time', 0, -1);
-guidata(hObject,handles);
+handles = guidata(hObject);
 delete(current_box)
 update_fig(hObject, eventdata, handles)
-guidata(hObject,handles);
 
 % --------------------------------------------------------------------
 function select_audio_Callback(hObject, eventdata, handles)
@@ -892,30 +889,22 @@ if nargin == 3 % if "Load Calls" button pressed
 end
 
 % try
-audio_info = audioinfo(fullfile(handles.data.settings.audiofolder,handles.current_audio_file));
+handles.data.audiodata = audioinfo(fullfile(handles.data.settings.audiofolder,handles.current_audio_file));
 
 Calls = table('Size',[1, 8], 'VariableTypes',...
     {'double',...
     'double',...
-    'double',...
-    'double',...
-    'cell',...
     'categorical',...
     'double',...
     'logical'},...
     'VariableNames',...
-    {'Rate',...
-    'Box',...
-    'RelBox',...
+    {'Box',...
     'Score',...
-    'Audio',...
     'Type',...
     'Power',...
     'Accept'});
 
-Calls.Rate=audio_info.SampleRate;
 Calls.Box=[0 0 1 1];
-Calls.RelBox=[0 0 1 1];
 Calls.Score=0;
 Calls.Type=categorical({'NA'});
 Calls.Power=1;
@@ -927,14 +916,8 @@ if  ~tag_column_exists
     handles.data.calls.Tag =  [1:size(handles.data.calls,1)]';
 end
 
-handles.data.audiodata = audio_info;
-
-guidata(hObject, handles);
 initialize_display(hObject, eventdata, handles);
-handles = guidata(hObject);
-
 close(h);
-update_fig(hObject, eventdata, handles);
 
 % catch
 %    disp('WARNING: No Audio Folder Selected'); 

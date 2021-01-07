@@ -18,11 +18,10 @@ ravenTable = readtable([ravenpath ravenname], 'Delimiter', 'tab');
     '*.m4a;*.mp4' 'MPEG-4 AAC'
     }, 'Select Audio File',handles.data.settings.audiofolder);
 
-info = audioinfo([audiopath audioname]);
-if info.NumChannels > 1
+audiodata = audioinfo([audiopath audioname]);
+if audiodata.NumChannels > 1
     warning('Audio file contains more than one channel. Use channel 1...')
 end
-samplerate = info.SampleRate;
 hc = waitbar(0,'Importing Calls from Raven Log');
 
 % fix some compatibility issues with Raven's naming
@@ -31,9 +30,7 @@ if ~ismember('DeltaTime_s_', ravenTable.Properties.VariableNames)
 end
 
 %% Get the data from the raven file
-Rate   = repmat(samplerate, height(ravenTable),1);
 Box    = [ravenTable.BeginTime_s_, ravenTable.LowFreq_Hz_/1000, ravenTable.DeltaTime_s_, (ravenTable.HighFreq_Hz_ - ravenTable.LowFreq_Hz_)/1000];
-RelBox = [ravenTable.DeltaTime_s_, ravenTable.LowFreq_Hz_/1000, ravenTable.DeltaTime_s_, (ravenTable.HighFreq_Hz_ - ravenTable.LowFreq_Hz_)/1000];
 Score  = ones(height(ravenTable),1);
 Accept = ones(height(ravenTable),1);
 Power  = zeros(height(ravenTable),1);
@@ -47,22 +44,13 @@ else
     Type = categorical(repmat({'USV'}, height(ravenTable), 1));
 end
 
-%% Load the audio for each call
-WindL = ravenTable.BeginTime_s_ - ravenTable.DeltaTime_s_;
-WindR = ravenTable.EndTime_s_   + ravenTable.DeltaTime_s_;
-audioSamples = round([WindL WindR]*samplerate);
-Audio = cell(height(ravenTable), 1);
-for i=1:height(ravenTable)
-        waitbar(i/height(ravenTable),hc);
-        Audio(i) = {mergeAudio([audiopath audioname], audioSamples(i,:))};
-end
 
 %% Put all the variables into a table
-Calls = table(Rate,Box,RelBox,Score,Audio,Accept,Type,Power,'VariableNames',{'Rate','Box','RelBox','Score','Audio','Accept','Type','Power'});
+Calls = table(Box,Score,Accept,Type,Power,'VariableNames',{'Box','Score','Accept','Type','Power'});
 
 
 [~ ,name] = fileparts(audioname);
 [FileName, PathName] = uiputfile(fullfile(handles.data.settings.detectionfolder, [name '.mat']),'Save Call File');
-save([PathName,FileName],'Calls','-v7.3');
+save([PathName,FileName],'Calls', 'audiodata','-v7.3');
 close(hc);
 update_folders(hObject, eventdata, handles);

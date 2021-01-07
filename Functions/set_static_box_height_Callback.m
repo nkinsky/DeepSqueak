@@ -22,7 +22,7 @@ new_low_freq = str2double(response{1});
 h = waitbar(0,'Initializing');
 % For each file
 for i = 1:length(fname)
-    Calls = loadCallfile(fullfile(fpath, fname{i}),handles);
+    [Calls, audiodata] = loadCallfile(fullfile(fpath, fname{i}),handles);
 
     waitbar(i/length(fname),h,['Processing File ' num2str(i) ' of '  num2str(length(fname))]);
 
@@ -40,15 +40,12 @@ for i = 1:length(fname)
         end
 
         % Make sure the new high frequency fits within the spectrogram
-        Calls.Box(j, 4) = min(Calls.Box(j, 4), Calls.Rate(j) ./ 2000 - Calls.Box(j, 2));
+        Calls.Box(j, 4) = min(Calls.Box(j, 4), audiodata.SampleRate ./ 2000 - Calls.Box(j, 2));
         Calls.Box(j, 4) = max(Calls.Box(j, 4), 1);
-
-        Calls.RelBox(j, 2) = Calls.Box(j, 2);
-        Calls.RelBox(j, 4) = Calls.Box(j, 4);
 
     end
 
-    save(fullfile(fpath, fname{i}),'Calls','-v7.3');
+    save(fullfile(fpath, fname{i}),'Calls', '-append');
 
 end
 

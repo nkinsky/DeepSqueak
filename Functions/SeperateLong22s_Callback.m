@@ -20,8 +20,8 @@ if nargin == 3
 
 end
 
-info = audioinfo(inputfile);
-if info.NumChannels > 1
+audiodata = audioinfo(inputfile);
+if audiodata.NumChannels > 1
     warning('Audio file contains more than one channel. Use channel 1...')
 end
 
@@ -71,24 +71,24 @@ for i=1:length(begin_time)
     end
 
     % Get the audio
-    WindL=round((begin_time(i)-0.1) .* info.SampleRate);
+    WindL=round((begin_time(i)-0.1) .* audiodata.SampleRate);
     pad = [];
     if WindL<=1
         pad=zeros(abs(WindL),1);
         WindL = 1;
     end
-    WindR=round((end_time__(i)+0.1) .* info.SampleRate);
-    WindR = min(WindR,info.TotalSamples); % Prevent WindR from being greater than total samples
+    WindR=round((end_time__(i)+0.1) .* audiodata.SampleRate);
+    WindR = min(WindR,audiodata.TotalSamples); % Prevent WindR from being greater than total samples
 
     audio = audioread(inputfile,[WindL WindR]); % Take channel 1
     audio = [pad; mean(audio - mean(audio,1),2)];
 
     % Make the spectrogram
-    windowsize = round(info.SampleRate * 0.02);
-    noverlap = round(info.SampleRate * 0.01);
-    nfft = round(info.SampleRate * 0.02);
+    windowsize = round(audiodata.SampleRate * 0.02);
+    noverlap = round(audiodata.SampleRate * 0.01);
+    nfft = round(audiodata.SampleRate * 0.02);
 
-    [s, fr, ti] = spectrogram(audio,windowsize,noverlap,nfft,info.SampleRate,'yaxis');
+    [s, fr, ti] = spectrogram(audio,windowsize,noverlap,nfft,audiodata.SampleRate,'yaxis');
 
     % Get the part of the spectrogram within the frequency bandwidth
     x1 = axes2pix(length(ti),ti,call_duration(i));
@@ -117,7 +117,7 @@ for i=1:length(begin_time)
     stoptime = find(CallRegions(1:end-1) >= 0.5 & CallRegions(2:end) < 0.5);
 
     newBoxes = [newBoxes
-        ti(startime)' + (WindL ./ info.SampleRate),...
+        ti(startime)' + (WindL ./ audiodata.SampleRate),...
         repmat(lower_freq(i),length(startime),1),...
         ti(stoptime - startime)',...
         repmat(high_freq_(i)-lower_freq(i),length(startime),1)];
@@ -142,19 +142,10 @@ for i=1:size(newBoxes,1)
 
     if ~OverlapsWithOld; continue; end
 
-    % Get the audio around the new call
-    WindL = round((newBoxes(i,1)-newBoxes(i,3))*info.SampleRate);
-    WindR = round((newBoxes(i,1)+newBoxes(i,3)*2)*info.SampleRate);
-    WindR = min(WindR,info.TotalSamples); % Prevent WindR from being greater than total samples
-
-    audio = mergeAudio(inputfile, [WindL WindR]);
 
     % Final Structure
-    NewCalls(i).Rate=info.SampleRate;
     NewCalls(i).Box=newBoxes(i,:);
-    NewCalls(i).RelBox=[newBoxes(i,3) newBoxes(i,2) newBoxes(i,3) newBoxes(i,4)];
     NewCalls(i).Score=newScores(i);
-    NewCalls(i).Audio=audio;
     NewCalls(i).Type=categorical({'USV'});
     NewCalls(i).Power=newPower(i);
     NewCalls(i).Accept=1;
@@ -166,7 +157,7 @@ if nargin == 3
     [FileName,PathName] = uiputfile(fullfile(handles.data.settings.detectionfolder,trainingdata),'Save Merged Detections');
     waitbar(i/length(newBoxes),hc,'Saving...');
     Calls = NewCalls;
-    save(fullfile(PathName, FileName), 'Calls', '-v7.3');
+    save(fullfile(PathName, FileName), 'Calls', 'audiodata', '-v7.3');
     update_folders(hObject, eventdata, handles);
     close(hc);
 end

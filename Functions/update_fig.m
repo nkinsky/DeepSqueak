@@ -60,6 +60,4 @@ handles.currentWindowRectangle.Position = [
 set(handles.hFig, 'pointer', 'arrow')
 guidata(hObject, handles);
 
-disp([length(findobj(handles.spectogramWindow, 'Type','rectangle')), length(findobj(handles.axes1, 'Type','rectangle'))])
-
 

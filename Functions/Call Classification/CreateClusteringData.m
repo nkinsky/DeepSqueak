@@ -58,23 +58,23 @@ for j = 1:length(fileName)
             
             if forClustering
                 stats = CalculateStats(I,wind,noverlap,nfft,rate,box,data.settings.EntropyThreshold,data.settings.AmplitudeThreshold);
-                spectrange = call.Rate / 2000; % get frequency range of spectrogram in KHz
+                spectrange = audioReader.audiodata.SampleRate / 2000; % get frequency range of spectrogram in KHz
                 FreqScale = spectrange / (1 + floor(nfft / 2)); % size of frequency pixels
-                TimeScale = (wind - noverlap) / call.Rate; % size of time pixels
+                TimeScale = (wind - noverlap) / audioReader.audiodata.SampleRate; % size of time pixels
                 xFreq = FreqScale * (stats.ridgeFreq_smooth) + call.Box(2);
                 xTime = stats.ridgeTime * TimeScale;
             end
             
             ClusteringData = [ClusteringData
                 [{uint8(im .* 256)} % Image
-                {call.RelBox(2)} % Lower freq
+                {call.Box(2)} % Lower freq
                 {stats.DeltaTime} % Delta time
                 {xFreq} % Time points
                 {xTime} % Freq points
                 {[filePath fileName{j}]} % File path
                 {i} % Call ID in file
                 {stats.Power}
-                {call.RelBox(4)}
+                {call.Box(4)}
                 ]'];
             
             clustAssign = [clustAssign; file.Calls.Type(i)];

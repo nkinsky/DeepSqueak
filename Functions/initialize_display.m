@@ -9,7 +9,7 @@ cla(handles.axes3);
 
 %
 handles.data.currentcall = 1;
-handles.data.current_call_tag = 1;
+handles.data.current_call_tag = '1';
 handles.data.current_call_valid = true;
 
 handles.data.windowposition = 0;
@@ -68,7 +68,7 @@ cb.Color = [1 1 1];
 cb.FontSize = 12;
 ylabel(handles.spectogramWindow,'Frequency (kHz)','Color','w');
 xlabel(handles.spectogramWindow,'Time (s)','Color','w');
-set(handles.spectogramWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
+set(handles.spectogramWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 1]);
 set(handles.spectogramWindow,'Color',[.1 .1 .1]);
 set(handles.spectogramWindow,'Visible', 'on');
 set(handles.epochSpect,'Visible', 'on');
@@ -78,9 +78,9 @@ set(handles.epochSpect,'ButtonDownFcn',@epoch_window_Callback);
 set(handles.topRightButton, 'Visible', 'on');
 set(handles.topLeftButton, 'Visible', 'on');
 
-% Plot Call Position
-render_call_position(hObject,handles,true);
-handles = guidata(hObject);
+% % Plot Call Position
+% render_call_position(hObject,handles,true);
+% handles = guidata(hObject);
 
 handles.PageWindowRectangles = {};
 handles.FocusWindowRectangles = {};

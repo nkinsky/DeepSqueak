@@ -33,17 +33,15 @@ else
     % Remove calls with boxes of size zero
     Calls(Calls.Box(:,4) == 0, :) = [];
     Calls(Calls.Box(:,3) == 0, :) = [];
+    
+    % Remove any old variables that we don't use anymore
+    Calls = removevars(Calls, intersect(Calls.Properties.VariableNames, {'RelBox', 'Rate', 'Audio'}));
 end
 
-%Handles are required for audiodata. When handles are missing, return only
-%the calls
-if isempty(handles)
-    return;
-end
 
 %% If audiodata isn't present, make it so
 if nargout > 1
-    if ~isfield(data, 'audiodata') || ~isfield(data.audiodata, 'Filename') || ~isfile(data.audiodata.Filename)
+    if ~isempty(handles) && ~isfield(data, 'audiodata') || ~isfield(data.audiodata, 'Filename') || ~isfile(data.audiodata.Filename)
         % Does anything in the audio folder match the filename? If so, assume
         % this is the matching audio file, else select the right one.
         [~, detection_name] = fileparts(filename);

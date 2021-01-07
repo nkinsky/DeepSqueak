@@ -18,13 +18,7 @@ sv_table = readtable([svpath svname],'Delimiter', ',');
     }, ['Select Audio File for ' svname],handles.data.settings.audiofolder);
 
 
-info = audioinfo([audiopath audioname]);
-if info.NumChannels > 1
-    warning('Audio file contains more than one channel. Use channel 1...')
-end
-
-rate = info.SampleRate;
-Calls  = cell2table(cell(0,9), 'VariableNames', {'Rate', 'Box', 'RelBox', 'Score', 'Audio', 'Accept', 'Type', 'Power', 'Tag'});
+Calls  = cell2table(cell(0,6), 'VariableNames', {'Box', 'Score', 'Accept', 'Type', 'Power', 'Tag'});
 hc = waitbar(0,'Importing Calls from Sonic Visualizer');
 n_rows = size(sv_table,1);
 for i=1:n_rows
@@ -39,12 +33,8 @@ for i=1:n_rows
     end
 
     box = [call_start,call_frequency_start/HZ_IN_KHZ, call_duration, call_frequency_length/HZ_IN_KHZ];
-    relbox =[ 0 0 0 0];
-    windL = box(1) - box(3);
-    windR = box(1) + 2*box(3); 
-    audio = mergeAudio([audiopath audioname], round([windL windR]*rate));
     
-    new_call = {rate,box,relbox,1,audio,1,categorical(call_label),1,i};
+    new_call = {box,1,1,categorical(call_label),1,i};
     Calls = [Calls;new_call];
     
 end

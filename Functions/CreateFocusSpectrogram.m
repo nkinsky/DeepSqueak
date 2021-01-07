@@ -12,10 +12,16 @@ if nargin < 4 || isempty(options)
     options.nfft = 0.0032;
     options.overlap = 0.0028;
     options.windowsize = 0.0032;
+    options.freq_range = [];
 end
 
-rate = call.Rate;
 box = call.Box;
+
+if isfield(options, 'freq_range') && ~isempty(options.freq_range)
+    box(2) = options.freq_range(1);
+    box(4) = options.freq_range(2) - options.freq_range(1);
+end
+
 
 % if ~isfield(handles,'current_focus_position')
 %     handles.current_focus_position = [];
@@ -46,10 +52,12 @@ box = call.Box;
 
 % audio = handles.data.audiodata.samples(round(window_start):round(window_stop));
 
+
+rate = audioReader.audiodata.SampleRate;
 windowsize = round(rate * options.windowsize);
 noverlap = round(rate * options.overlap);
 nfft = round(rate * options.nfft);
-
+    
 if make_spectrogram
     audio = audioReader.AudioSamples(box(1), box(1) + box(3));
     [s, fr, ti] = spectrogram(audio,windowsize,noverlap,nfft,rate,'yaxis');
@@ -69,11 +77,13 @@ end
 x1 = 1;
 x2 = length(ti);
 
-y1=find(fr./1000>=round(call.Box(2)-options.frequency_padding),1);
-max_freq = round(call.Box(2)+call.Box(4)+options.frequency_padding);
-kHz = fr./1000;
-y2=find(kHz>=min(max_freq,max(kHz)),1);
-I=abs(s(y1:y2,x1:x2));
+min_freq = find(fr./1000 >= call.Box(2) - options.frequency_padding,1);
+min_freq = max(min_freq, 1);
+
+max_freq = find(fr./1000 >= call.Box(4) + call.Box(2) + options.frequency_padding,1);
+max_freq = min(round(max_freq), length(fr));
+
+I=abs(s(min_freq:max_freq,x1:x2));
 
 
 end
