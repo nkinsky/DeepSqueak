@@ -1,4 +1,4 @@
-function render_call_boxes(current_axes,handles, hObject,roi, fill_heigth)
+function handles = render_call_boxes(current_axes,handles,roi, fill_heigth)
 %% This function draws rectangles in the focus view and page view
 
 axis_xlim = get(current_axes,'Xlim');
@@ -93,6 +93,5 @@ else
     end
 end
 
-guidata(hObject, handles);
 end
 

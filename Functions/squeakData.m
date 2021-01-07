@@ -27,7 +27,6 @@ classdef squeakData < handle
     methods
         function obj = squeakData(squeakfolder)
             obj.squeakfolder = squeakfolder;
-            
             obj.defaultSettings = struct();
             obj.defaultSettings.detectionfolder = fullfile(obj.squeakfolder, 'Detections/');
             obj.defaultSettings.networkfolder = fullfile(obj.squeakfolder, 'Networks/');
@@ -39,36 +38,45 @@ classdef squeakData < handle
             obj.defaultSettings.AmplitudeThreshold = 0;
             obj.defaultSettings.EntropyThreshold = 0.3;
             obj.defaultSettings.labels = {'FF','FM','Trill','Split',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-            obj.defaultSettings.pageSize = 1; % Size of page view in seconds
+            obj.defaultSettings.pageSize = 3; % Size of page view in seconds
             obj.defaultSettings.spectogram_ticks = 11;
             obj.defaultSettings.focus_window_size = 0.5;
-            
+            % Spectrogram fft settings in seconds
+            obj.defaultSettings.spect.windowsize = 0.0032;
+            obj.defaultSettings.spect.noverlap = 0.0016;
+            obj.defaultSettings.spect.nfft = 0.0032;
+            obj.defaultSettings.spect.type = 'Amplitude';
         end
+        
         
         function saveSettings(obj)
             settings = obj.settings;
             save(fullfile(obj.squeakfolder, 'settings.mat'), '-struct', 'settings')
         end
         
+        
         function loadSettings(obj)
-            
             % Check if the settings file exists. Create it if it doesn't.
             if ~exist(fullfile(obj.squeakfolder,'settings.mat'), 'file')
                 obj.settings = obj.defaultSettings;
                 disp('Settings file not found. Create a new one...')
                 saveSettings(obj)
             end
-            
             obj.settings = load(fullfile(obj.squeakfolder, 'settings.mat'));
-            
             % Add any missing settings
             missingSettings = setdiff(fieldnames(obj.defaultSettings), fieldnames(obj.settings));
             for i = missingSettings'
                 obj.settings = setfield(obj.settings, i{:}, getfield(obj.defaultSettings,i{:}));
             end
-            
-            
         end
+        
+        function set.audiodata(obj, audiodata)
+            obj.StoredSamples = [];
+            obj.AudioStartSample = 0;
+            obj.AudioStopSample = 0;
+            obj.audiodata = audiodata;
+        end
+        
         
         function samples = AudioSamples(obj, startTime, finalTime)
             startTime = max(startTime, 0);

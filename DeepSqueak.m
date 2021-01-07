@@ -584,36 +584,6 @@ if ~isempty(newrate)
 end
 guidata(hObject, handles);
 
-% --------------------------------------------------------------------
-function Change_Display_Range_Callback(hObject, eventdata, handles)
-% Change the x and y axis in the spectrogram viewer
-prompt = {'Low Frequency (kHz):', 'High Frequency (kHz):', 'Fixed Display Range (s) (Set to 0 to autoscale)'};
-dlg_title = 'New Display Range:';
-num_lines=[1 80]; options.Resize='off'; options.WindowStyle='modal'; options.Interpreter='tex';
-defaultans = {num2str(handles.data.settings.LowFreq),num2str(handles.data.settings.HighFreq),num2str(handles.data.settings.DisplayTimePadding)};
-dispRange = inputdlg(prompt,dlg_title,num_lines,defaultans);
-if isempty(dispRange); return; end
-
-[LowFreq,~,errmsg] = sscanf(dispRange{1},'%f',1);
-disp(errmsg);
-[HighFreq,~,errmsg] = sscanf(dispRange{2},'%f',1);
-disp(errmsg);
-[DisplayTimePadding,~,errmsg] = sscanf(dispRange{3},'%f',1);
-disp(errmsg);
-if ~isempty(LowFreq) && ~isempty(HighFreq) && ~isempty(DisplayTimePadding)
-    if HighFreq > LowFreq
-        handles.data.settings.LowFreq = LowFreq;
-        handles.data.settings.HighFreq = HighFreq;
-        %handles.data.settings.DisplayTimePadding = DisplayTimePadding;
-        handles.data.saveSettings();
-        update_folders(hObject, eventdata, handles);
-        update_fig(hObject, eventdata, handles);
-        
-    else
-        errordlg('High cutoff must be greater than low cutoff.')
-    end
-end
-guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function Help_Callback(hObject, eventdata, handles)
@@ -982,60 +952,6 @@ function popupmenuColorMap_ButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-function freqUpper_Callback(hObject, eventdata, handles)
-% hObject    handle to freqUpper (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-%     set(hObject, 'String', num2str(get_spectogram_max(hObject, handles)));
-%     guidata(hObject,handles);
-%     update_fig(hObject, [], handles);
-HighFreq=str2double(get(hObject,'String'));
-try
-    handles.data.settings.HighFreq = HighFreq;
-    update_fig(hObject, eventdata, handles);
-catch
-    errordlg('High cutoff must be greater than low cutoff.')
-end
-% Hints: get(hObject,'String') returns contents of freqUpper as text
-%        str2double(get(hObject,'String')) returns contents of freqUpper as a double
-
-% --- Executes during object creation, after setting all properties.
-function freqUpper_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to freqUpper (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function freqLower_Callback(hObject, eventdata, handles)
-% hObject    handle to freqLower (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-LowFreq = str2double(get(hObject,'String'));
-if handles.data.settings.HighFreq > LowFreq
-    handles.data.settings.LowFreq = LowFreq;
-    update_fig(hObject, eventdata, handles);
-else
-    errordlg('High cutoff must be greater than low cutoff.')
-end
-% Hints: get(hObject,'String') returns contents of freqLower as text
-%        str2double(get(hObject,'String')) returns contents of freqLower as a double
-
-% --- Executes during object creation, after setting all properties.
-function freqLower_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to freqLower (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over loadcalls.
@@ -1044,22 +960,6 @@ function loadcalls_ButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% --- Executes on button press in callBackward.
-function callBackward_Callback(hObject, eventdata, handles)
-if handles.data.currentcall>1 % If not the first call
-    handles.data.currentcall=handles.data.currentcall-1;
-    handles.data.focusCenter = handles.data.windowposition + handles.data.settings.pageSize - handles.data.settings.focus_window_size ./ 2;
-    update_fig(hObject, eventdata, handles);
-end
-
-% --- Executes on button press in callForward.
-function callForward_Callback(hObject, eventdata, handles)
-if handles.data.currentcall < height(handles.data.calls) % If not the last call
-    handles.data.currentcall=handles.data.currentcall+1;
-    update_focus_display(hObject, handles);
-    update_fig(hObject, eventdata, handles);
-end
-% hObject    handle to callForward (see GCBO)
 
 % --------------------------------------------------------------------
 function contributorToolsMenu_Callback(hObject, eventdata, handles)

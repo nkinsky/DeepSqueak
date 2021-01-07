@@ -25,26 +25,25 @@ handles.data.windowposition = jumps*handles.data.settings.pageSize;
 
 
 %% Plot Call Position (updates the little bar with the green lines)
-render_call_position(hObject,handles,handles.update_position_axes);
-handles = guidata(hObject);
+% render_call_position(hObject,handles,handles.update_position_axes);
+% handles = guidata(hObject);
 
 
 
-%% Render the page view
-renderEpochSpectogram(hObject,handles, force_render_page);
-handles = guidata(hObject);
-
-% set(0,'defaultFigureVisible','off');
-if  ~isempty(handles.current_focus_position) || handles.data.current_call_valid
-    update_focus_display(hObject,handles);
+%% Render the page view if the page changed
+if handles.data.lastWindowPosition ~= handles.data.windowposition || force_render_page
+    renderEpochSpectogram(hObject,handles);
     handles = guidata(hObject);
 end
 
+% set(0,'defaultFigureVisible','off');
+% if  ~isempty(handles.current_focus_position) || handles.data.current_call_valid
+handles = update_focus_display(handles);
+% end
+
 %% Plot the boxes on top of the detections
-render_call_boxes(handles.spectogramWindow, handles, hObject,false,false);
-handles = guidata(hObject);
-render_call_boxes(handles.axes1, handles,hObject, true,false);
-handles = guidata(hObject);
+handles = render_call_boxes(handles.spectogramWindow, handles,false,false);
+handles = render_call_boxes(handles.axes1, handles, true,false);
 
 
 %% Position of the gray box in the page view
@@ -60,5 +59,7 @@ handles.currentWindowRectangle.Position = [
 % set(groot,'defaultFigureVisible','on');
 set(handles.hFig, 'pointer', 'arrow')
 guidata(hObject, handles);
+
+disp([length(findobj(handles.spectogramWindow, 'Type','rectangle')), length(findobj(handles.axes1, 'Type','rectangle'))])
 
 
