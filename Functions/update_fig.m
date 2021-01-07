@@ -25,7 +25,7 @@ handles.data.windowposition = jumps*handles.data.settings.pageSize;
 
 
 %% Plot Call Position (updates the little bar with the green lines)
-% render_call_position(hObject,handles,handles.update_position_axes);
+handles = render_call_position(handles,handles.update_position_axes);
 % handles = guidata(hObject);
 
 

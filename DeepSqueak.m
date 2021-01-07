@@ -252,22 +252,22 @@ soundsc(audio,playbackRate);
 function NextCall_Callback(hObject, eventdata, handles)
 if handles.data.currentcall(1) < height(handles.data.calls) % If not the last call
     handles.data.currentcall=handles.data.currentcall+1;
-    handles.data.current_call_valid = true;
-    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-    handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
-    update_fig(hObject, eventdata, handles);
 end
-% guidata(hObject, handles);
+handles.data.current_call_valid = true;
+handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
+handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
+update_fig(hObject, eventdata, handles);
+
 
 % --- Executes on button press in PreviousCall.
 function PreviousCall_Callback(hObject, eventdata, handles)
 if handles.data.currentcall(1) >1 % If not the first call
     handles.data.currentcall=handles.data.currentcall-1;
-    handles.data.current_call_valid = true;
-    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
-    handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
-    update_fig(hObject, eventdata, handles);
 end
+handles.data.current_call_valid = true;
+handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
+handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
+update_fig(hObject, eventdata, handles);
 
 % --- Executes on selection change in Networks Folder Pop up.
 function neuralnetworkspopup_Callback(hObject, eventdata, handles)
@@ -301,13 +301,13 @@ end
 
 % --- Executes on button press in AcceptCall.
 function AcceptCall_Callback(hObject, eventdata, handles)
-handles.data.calls.Accept(handles.data.currentcall) = 1;
+handles.data.calls.Accept(handles.data.currentcall) = true;
 handles.update_position_axes = 1;
 NextCall_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in RejectCall.
 function RejectCall_Callback(hObject, eventdata, handles)
-handles.data.calls.Accept(handles.data.currentcall) = 0;
+handles.data.calls.Accept(handles.data.currentcall) = false;
 handles.update_position_axes = 1;
 NextCall_Callback(hObject, eventdata, handles)
 
@@ -891,24 +891,12 @@ end
 % try
 handles.data.audiodata = audioinfo(fullfile(handles.data.settings.audiofolder,handles.current_audio_file));
 
-Calls = table('Size',[1, 8], 'VariableTypes',...
-    {'double',...
-    'double',...
-    'categorical',...
-    'double',...
-    'logical'},...
-    'VariableNames',...
-    {'Box',...
-    'Score',...
-    'Type',...
-    'Power',...
-    'Accept'});
-
-Calls.Box=[0 0 1 1];
-Calls.Score=0;
-Calls.Type=categorical({'NA'});
-Calls.Power=1;
-Calls.Accept=0;
+Calls = table();
+Calls.Box = [0 0 1 1];
+Calls.Score = 0;
+Calls.Type = categorical({'NA'});
+Calls.Power = 1;
+Calls.Accept = false;
 
 handles.data.calls = Calls;
 tag_column_exists = strcmp('Tag',handles.data.calls.Properties.VariableNames);

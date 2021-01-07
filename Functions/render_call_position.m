@@ -1,4 +1,4 @@
-function  render_call_position(hObject,handles, all_calls)
+function  handles = render_call_position(handles, all_calls)
 %% This function makes and updates the little window with the green lines
 % Timestamp for each call
 
@@ -36,8 +36,10 @@ if all_calls
         end
     end
     
-    [f,xi] = ksdensity(CallTime, linspace(0,handles.data.audiodata.Duration,200), 'Bandwidth', 1);
-    line(xi,rescale(f),'Parent', handles.detectionAxes,'Color',[0,1,0], 'PickableParts','none');
+    if any(handles.data.calls.Accept)
+        [f,xi] = ksdensity(CallTime(handles.data.calls.Accept == true), linspace(0,handles.data.audiodata.Duration,200), 'Bandwidth', 1);
+        line(xi,rescale(f),'Parent', handles.detectionAxes,'Color',[0,1,0], 'PickableParts','none');
+    end
     
     % Initialize the timestamp text and current call line
     handles.CurrentCallLineText = text(0, 20, ' ', 'Color', 'W', 'HorizontalAlignment', 'center', 'Parent', handles.detectionAxes);
@@ -63,8 +65,4 @@ set(handles.CurrentCallLineText,'Position',[calltime,1.4,0],'String',sprintf('%.
 set(handles.CurrentCallLinePosition,'XData',[calltime(1) calltime(1)]);
 
 handles.CurrentCallWindowRectangle.Position = [  handles.data.windowposition 0 handles.data.settings.pageSize  1];
-% end
-
-guidata(hObject,handles);
-end
 

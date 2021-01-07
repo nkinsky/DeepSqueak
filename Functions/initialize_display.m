@@ -14,7 +14,7 @@ handles.data.current_call_valid = true;
 
 handles.data.windowposition = 0;
 handles.data.lastWindowPosition = -1;
-handles.update_position_axes = 0;
+handles.update_position_axes = 1;
 
 % Position of the focus window
 handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
