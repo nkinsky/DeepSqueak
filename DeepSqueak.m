@@ -254,7 +254,6 @@ if handles.data.currentcall(1) < height(handles.data.calls) % If not the last ca
     handles.data.currentcall=handles.data.currentcall+1;
 end
 handles.data.current_call_valid = true;
-handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
 handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 update_fig(hObject, eventdata, handles);
 
@@ -265,7 +264,6 @@ if handles.data.currentcall(1) >1 % If not the first call
     handles.data.currentcall=handles.data.currentcall-1;
 end
 handles.data.current_call_valid = true;
-handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
 handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 update_fig(hObject, eventdata, handles);
 
@@ -334,7 +332,6 @@ else
         handles.data.currentcall = calls_within_window(1);
         
         handles.data.current_call_valid = true;
-        handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
     end
     
     guidata(hObject,handles);
@@ -751,7 +748,6 @@ calls_within_window = find(handles.data.calls.Box(:,1) < handles.data.windowposi
 if ~isempty(calls_within_window)
     handles.data.currentcall = calls_within_window;
     handles.data.current_call_valid = true;
-    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
 end
 
 update_fig(hObject, eventdata, handles);
@@ -773,7 +769,6 @@ calls_within_window = find(handles.data.calls.Box(:,1) > handles.data.windowposi
 if ~isempty(calls_within_window)
     handles.data.currentcall = calls_within_window;
     handles.data.current_call_valid = true;
-    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
 end
 
 update_fig(hObject, eventdata, handles);
@@ -788,10 +783,8 @@ if ~isempty(calls_within_window)
     [~, closestCall] = min(abs(callMidpoints - handles.data.focusCenter));
     handles.data.currentcall = calls_within_window(closestCall);
     handles.data.current_call_valid = true;
-    handles.data.current_call_tag = num2str(handles.data.calls{handles.data.currentcall,'Tag'});
 end
 update_fig(hObject, eventdata, handles);
-guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function epochWindowSizePopup_CreateFcn(hObject, eventdata, handles)

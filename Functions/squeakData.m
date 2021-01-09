@@ -2,7 +2,6 @@ classdef squeakData < handle
     properties
         calls
         currentcall = 1
-        current_call_tag = '1'
         current_call_valid = true
         windowposition = 1;
         lastWindowPosition = -1;

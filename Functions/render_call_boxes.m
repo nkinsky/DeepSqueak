@@ -13,7 +13,7 @@ calls_in_page = find( (handles.data.calls.Box(:,1) >= axis_xlim(1) & handles.dat
 
 
 boxes = handles.data.calls.Box(calls_in_page,:);
-tags = handles.data.calls{calls_in_page,'Tag'};
+tags = handles.data.calls.Tag(calls_in_page);
     
     
     
@@ -30,10 +30,11 @@ for box_number = 1:length(calls_in_page)
     box_color = 'r';
     line_style = '-';
     
+    % Make the line thick if current call
     if handles.data.calls.Accept(calls_in_page(box_number))
         box_color = [0 1 0];
     end
-    if strcmp(current_tag, handles.data.current_call_tag)
+    if tags(box_number) == handles.data.currentcall
         line_width = 2;
     end
     

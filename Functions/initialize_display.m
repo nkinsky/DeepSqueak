@@ -9,7 +9,6 @@ cla(handles.axes3);
 
 %
 handles.data.currentcall = 1;
-handles.data.current_call_tag = '1';
 handles.data.current_call_valid = true;
 
 handles.data.windowposition = 0;

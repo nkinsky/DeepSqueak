@@ -24,17 +24,14 @@ end
 if select_added == 0
     handles.data.currentcall=1;
 elseif select_added == -1
-   handles.data.currentcall = find(idx == size(handles.data.calls,1)); 
-   handles.data.current_call_tag = num2str(handles.data.currentcall);
+   handles.data.currentcall = find(idx == size(handles.data.calls,1));
 else
    handles.data.currentcall = select_added; 
-   handles.data.current_call_tag = num2str(select_added);  
 end
 
 handles.data.calls = handles.data.calls(idx, :);
 handles.data.calls.Tag = [1:size(handles.data.calls,1)]';
 handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
-guidata(hObject, handles);
 
 update_fig(hObject, eventdata, handles);
 
