@@ -4,6 +4,12 @@ h = waitbar(0,'Loading Calls Please wait...');
 update_folders(hObject, eventdata, handles);
 handles = guidata(hObject);
 if nargin == 3 % if "Load Calls" button pressed
+    if isempty(handles.detectionfiles)
+        close(h);
+        errordlg(['No valid detection files in current folder. Select a folder containing detection files with '...
+            '"File -> Select Detection Folder", then choose the desired file in the "Detected Call Files" dropdown box.'])
+        return
+    end
     handles.current_file_id = get(handles.popupmenuDetectionFiles,'Value');
     handles.current_detection_file = handles.detectionfiles(handles.current_file_id).name;
 end

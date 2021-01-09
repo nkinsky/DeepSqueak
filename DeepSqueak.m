@@ -183,15 +183,12 @@ handles = guidata(hObject);  % Get newest version of handles
 % Set the sliders to the saved values
 set(handles.TonalitySlider, 'Value', handles.data.settings.EntropyThreshold);
 
-dropdown_items = cellstr(get(handles.epochWindowSizePopup,'String'));
-dropdown_items = regexprep(dropdown_items, '[^0-9.]', ' ');
-dropdown_items = str2double(dropdown_items);
-set(handles.epochWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.pageSize))
-
-dropdown_items = cellstr(get(handles.focusWindowSizePopup,'String'));
-dropdown_items = regexprep(dropdown_items, '[^0-9.]', ' ');
-dropdown_items = str2double(dropdown_items);
-set(handles.focusWindowSizePopup, 'Value', find(dropdown_items == handles.data.settings.focus_window_size))
+% Set the page and focus window dropdown boxes to the values defined in
+% squeakData, and set the current value to the one closest to the save value.
+handles.epochWindowSizePopup.String = compose('%gs', handles.data.pageSizes);
+[~, handles.epochWindowSizePopup.Value] =  min(abs(handles.data.pageSizes - handles.data.settings.pageSize));
+handles.focusWindowSizePopup.String = compose('%gs', handles.data.focusSizes);
+[~, handles.focusWindowSizePopup.Value] =  min(abs(handles.data.focusSizes - handles.data.settings.focus_window_size));
     
 guidata(hObject, handles);
 
@@ -864,12 +861,18 @@ function loadAudioFile_Callback(hObject, eventdata, handles)
 h = waitbar(0,'Loading Audio Please wait...');
 update_folders(hObject, eventdata, handles);
 handles = guidata(hObject);
+
 if nargin == 3 % if "Load Calls" button pressed
+    if isempty(handles.audiofiles)
+        close(h);
+        errordlg(['No valid audio files in current audio folder. Select a folder containing audio with '...
+            '"File -> Select Audio Folder", then choose the desired file in the "Audio Files" dropdown box.'])
+        return
+    end
     handles.current_file_id = get(handles.AudioFilespopup,'Value');
     handles.current_audio_file = handles.audiofiles(handles.current_file_id).name;
 end
 
-% try
 handles.data.audiodata = audioinfo(fullfile(handles.data.settings.audiofolder,handles.current_audio_file));
 
 Calls = table(zeros(0,4),[],[],[],[], 'VariableNames', {'Box', 'Score', 'Type', 'Power', 'Accept'});
@@ -883,10 +886,6 @@ handles.data.calls = Calls;
 handles.data.focusCenter = handles.data.settings.focus_window_size ./ 2;
 initialize_display(hObject, eventdata, handles);
 close(h);
-
-% catch
-%    disp('WARNING: No Audio Folder Selected'); 
-% end
 
 
 % --- Executes during object creation, after setting all properties.

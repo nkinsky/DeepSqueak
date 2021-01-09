@@ -15,6 +15,8 @@ classdef squeakData < handle
         labelShortcuts = {'1','2','3','4','5','6','7','8','9','0','=','+','!','"','#','¤','%','&','/','(',')','=','?','@','£','$','{','[',']','}'}
         page_spect = struct() % spectrogram of the page view
         focusCenter = 0; % center of the current focus window
+        pageSizes = [2, 3, 5, 10] % List of page size values in the dropdown box
+        focusSizes = [.25, .5, 1] % List of focus size values in the dropdown box
     end
     properties (Access = private)
         AudioStartSample = 0;
