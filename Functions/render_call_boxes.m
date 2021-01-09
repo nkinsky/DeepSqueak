@@ -11,15 +11,11 @@ calls_in_page = find( (handles.data.calls.Box(:,1) >= axis_xlim(1) & handles.dat
     | ( handles.data.calls.Box(:,1)<=  axis_xlim(1) & handles.data.calls.Box(:,1) + handles.data.calls.Box(:,3) >=  axis_xlim(2) )...
     );
 
-
 boxes = handles.data.calls.Box(calls_in_page,:);
-tags = handles.data.calls.Tag(calls_in_page);
-    
-    
     
 % Loop through all calls
 for box_number = 1:length(calls_in_page)
-    current_tag = num2str(tags(box_number,:));
+    current_tag = num2str(calls_in_page(box_number));
     
     if fill_heigth
         boxes(box_number,2) = axis_ylim(1);
@@ -34,7 +30,7 @@ for box_number = 1:length(calls_in_page)
     if handles.data.calls.Accept(calls_in_page(box_number))
         box_color = [0 1 0];
     end
-    if tags(box_number) == handles.data.currentcall
+    if calls_in_page(box_number) == handles.data.currentcall
         line_width = 2;
     end
     

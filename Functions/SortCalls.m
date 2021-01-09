@@ -30,8 +30,9 @@ else
 end
 
 handles.data.calls = handles.data.calls(idx, :);
-handles.data.calls.Tag = [1:size(handles.data.calls,1)]';
+if ~isempty(handles.data.calls)
 handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
+end
 
 update_fig(hObject, eventdata, handles);
 

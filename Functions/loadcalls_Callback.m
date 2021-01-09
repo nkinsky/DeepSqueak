@@ -12,10 +12,8 @@ handles.data.calls = [];
 handles.data.audiodata = [];
 [handles.data.calls, handles.data.audiodata] = loadCallfile(fullfile(handles.detectionfiles(handles.current_file_id).folder,  handles.current_detection_file), handles);
 
-tag_column_exists = strcmp('Tag',handles.data.calls.Properties.VariableNames);
-if  ~tag_column_exists
-    handles.data.calls.Tag =  [1:size(handles.data.calls,1)]';
-end
+% Position of the focus window to the first call in the file
+handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 
 initialize_display(hObject, eventdata, handles);
 close(h);

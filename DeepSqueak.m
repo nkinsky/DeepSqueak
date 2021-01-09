@@ -250,22 +250,23 @@ soundsc(audio,playbackRate);
 
 % --- Executes on button press in NextCall.
 function NextCall_Callback(hObject, eventdata, handles)
-if handles.data.currentcall(1) < height(handles.data.calls) % If not the last call
+if handles.data.currentcall < height(handles.data.calls) % If not the last call
     handles.data.currentcall=handles.data.currentcall+1;
+    handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 end
 handles.data.current_call_valid = true;
-handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 update_fig(hObject, eventdata, handles);
 
 
 % --- Executes on button press in PreviousCall.
 function PreviousCall_Callback(hObject, eventdata, handles)
-if handles.data.currentcall(1) >1 % If not the first call
+if handles.data.currentcall > 1 % If not the first call
     handles.data.currentcall=handles.data.currentcall-1;
+    handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 end
 handles.data.current_call_valid = true;
-handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
 update_fig(hObject, eventdata, handles);
+
 
 % --- Executes on selection change in Networks Folder Pop up.
 function neuralnetworkspopup_Callback(hObject, eventdata, handles)
@@ -408,26 +409,19 @@ if current_box.Position(3) == 0 || current_box.Position(4) == 4
     delete(current_box)
     return
 end
-new_tag = max(handles.data.calls.Tag) + 1;
-% new_box = {handles.data.audiodata.SampleRate, current_box.Position, [0,0,0,0], 0, audio,0,0,1,new_tag };
 new_box = table();
 new_box.Box = current_box.Position;
 new_box.Score = 1;
 new_box.Type = categorical({'USV'});
 new_box.Power = 0;
-new_box.Accept = 1;
-new_box.Tag = new_tag;
-handles.data.calls = [handles.data.calls;new_box];
-set(current_box,'Tag',num2str(new_tag)); 
-set(current_box,'Color',[0 1 0]);
+new_box.Accept = true;
+handles.data.calls = [handles.data.calls; new_box];
 
 %Now delete the roi and render the figure. The roi will be rendered along
 %with the existing boxes.
 handles.data.current_call_valid = true;
 SortCalls(hObject, eventdata, handles, 'time', 0, -1);
-handles = guidata(hObject);
 delete(current_box)
-update_fig(hObject, eventdata, handles)
 
 % --------------------------------------------------------------------
 function select_audio_Callback(hObject, eventdata, handles)
@@ -878,19 +872,15 @@ end
 % try
 handles.data.audiodata = audioinfo(fullfile(handles.data.settings.audiofolder,handles.current_audio_file));
 
-Calls = table();
-Calls.Box = [0 0 1 1];
-Calls.Score = 0;
-Calls.Type = categorical({'NA'});
-Calls.Power = 1;
-Calls.Accept = false;
-
+Calls = table(zeros(0,4),[],[],[],[], 'VariableNames', {'Box', 'Score', 'Type', 'Power', 'Accept'});
+% Calls.Box = [0 0 1 1];
+% Calls.Score = 0;
+% Calls.Type = categorical({'NA'});
+% Calls.Power = 1;
+% Calls.Accept = false;
 handles.data.calls = Calls;
-tag_column_exists = strcmp('Tag',handles.data.calls.Properties.VariableNames);
-if  ~tag_column_exists
-    handles.data.calls.Tag =  [1:size(handles.data.calls,1)]';
-end
-
+% Position of the focus window
+handles.data.focusCenter = handles.data.settings.focus_window_size ./ 2;
 initialize_display(hObject, eventdata, handles);
 close(h);
 

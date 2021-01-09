@@ -25,8 +25,8 @@ set_tick_timestamps(handles.focusWindow, true);
 
 % set(handles.focusWindow,'ylim',[spectogram_y_lims(1)/1000 spectogram_y_lims(2)/1000]);
 
-% Don't update the call info the there aren't any calls
-if ~any(handles.data.calls.Box(handles.data.currentcall,1) > ti_f(1) &...
+% Don't update the call info the there aren't any calls in the page view
+if isempty(handles.data.calls) || ~any(handles.data.calls.Box(handles.data.currentcall,1) > ti_f(1) &...
         sum(handles.data.calls.Box(handles.data.currentcall,[1,3]),2) < ti_f(end))
     return
 end

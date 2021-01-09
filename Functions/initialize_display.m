@@ -14,9 +14,6 @@ handles.data.current_call_valid = true;
 handles.data.windowposition = 0;
 handles.data.lastWindowPosition = -1;
 handles.update_position_axes = 1;
-
-% Position of the focus window
-handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
     
 
 %% Create plots for update_fig to update
@@ -77,10 +74,6 @@ set(handles.epochSpect,'ButtonDownFcn', @(hObject,eventdata) mousePositionSelect
 %Make the top scroll button visible
 set(handles.topRightButton, 'Visible', 'on');
 set(handles.topLeftButton, 'Visible', 'on');
-
-% % Plot Call Position
-% render_call_position(hObject,handles,true);
-% handles = guidata(hObject);
 
 handles.PageWindowRectangles = {};
 handles.FocusWindowRectangles = {};

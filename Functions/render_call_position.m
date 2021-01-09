@@ -49,14 +49,14 @@ if all_calls
 end
 
 
-% if isfield(handles, 'data')
-
-calltime = handles.data.calls.Box(handles.data.currentcall, 1);
-
-if handles.data.calls.Accept(handles.data.currentcall)
-    handles.CurrentCallLinePosition.Color = [0,1,0];
-else
-    handles.CurrentCallLinePosition.Color = [1,0,0];
+calltime = handles.data.focusCenter;
+if ~isempty(handles.data.calls)
+    calltime = handles.data.calls.Box(handles.data.currentcall, 1);
+    if handles.data.calls.Accept(handles.data.currentcall)
+        handles.CurrentCallLinePosition.Color = [0,1,0];
+    else
+        handles.CurrentCallLinePosition.Color = [1,0,0];
+    end
 end
 
 sec = mod(calltime, 60);

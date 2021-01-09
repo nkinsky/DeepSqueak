@@ -11,9 +11,8 @@ clicked_tag = str2double(get(rectangle, 'Tag'));
 
 switch  evt.SelectionType
     case 'right' % delete if right click
-        currentcall = find(handles.data.calls.Tag == clicked_tag);
-        handles.data.calls(currentcall,:) = [];
-        SortCalls(hObject, [], handles, 'time', 0, currentcall - 1);
+        handles.data.calls(clicked_tag,:) = [];
+        SortCalls(hObject, [], handles, 'time', 0, clicked_tag - 1);
     case 'left' % Make it the current call if left clicked
         if clicked_tag ~= handles.data.currentcall
             handles.data.currentcall = clicked_tag;
@@ -79,9 +78,9 @@ uiwait(d);
 
 
     function label_callback(~,~,new_type)
-        i = find(handles.data.calls.Tag == str2double(tag), 1);
+        clicked_tag = str2double(tag);
         if ~isempty(i)
-            handles.data.calls{i,'Type'} = {new_type};
+            handles.data.calls{clicked_tag,'Type'} = {new_type};
             delete(gcf);
             update_fig(hObject, [], handles);
         end

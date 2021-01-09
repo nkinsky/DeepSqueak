@@ -6,9 +6,7 @@ end
 set(handles.hFig, 'pointer', 'watch')
 % drawnow nocallbacks
 
-if isempty(handles.data.calls)
-    return
-end
+
 
 %% Update focus position
 handles.current_focus_position = [
@@ -24,27 +22,6 @@ jumps = floor(handles.data.focusCenter / handles.data.settings.pageSize);
 handles.data.windowposition = jumps*handles.data.settings.pageSize;
 
 
-%% Plot Call Position (updates the little bar with the green lines)
-handles = render_call_position(handles,handles.update_position_axes);
-% handles = guidata(hObject);
-
-
-
-%% Render the page view if the page changed
-if handles.data.lastWindowPosition ~= handles.data.windowposition || force_render_page
-    renderEpochSpectogram(hObject,handles);
-    handles = guidata(hObject);
-end
-
-% set(0,'defaultFigureVisible','off');
-% if  ~isempty(handles.current_focus_position) || handles.data.current_call_valid
-handles = update_focus_display(handles);
-% end
-
-%% Plot the boxes on top of the detections
-handles = render_call_boxes(handles.spectogramWindow, handles,false,false);
-handles = render_call_boxes(handles.focusWindow, handles, true,false);
-
 
 %% Position of the gray box in the page view
 spectogram_axes_ylim = ylim(handles.spectogramWindow);
@@ -54,6 +31,27 @@ handles.currentWindowRectangle.Position = [
     handles.current_focus_position(3)
     spectogram_axes_ylim(2)
     ];
+
+
+%% Render the page view if the page changed
+if handles.data.lastWindowPosition ~= handles.data.windowposition || force_render_page
+    renderEpochSpectogram(hObject,handles);
+    handles = guidata(hObject);
+end
+
+handles = update_focus_display(handles);
+
+
+%% Plot Call Position (updates the little bar with the green lines)
+handles = render_call_position(handles, handles.update_position_axes);
+
+
+%% Plot the boxes on top of the detections
+handles = render_call_boxes(handles.spectogramWindow, handles,false,false);
+handles = render_call_boxes(handles.focusWindow, handles, true,false);
+
+
+
 
 
 % set(groot,'defaultFigureVisible','on');
