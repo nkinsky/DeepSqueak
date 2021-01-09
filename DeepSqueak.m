@@ -173,10 +173,10 @@ end
 
 
 % Cool Background Image
-imshow(handles.background, 'Parent', handles.axes1);
-set(handles.axes1,'Color',[0.1 0.1 0.1],'YColor',[1 1 1],'XColor',[1 1 1]);
-set(handles.axes1,'XTick',[]);
-set(handles.axes1,'YTick',[]);
+imshow(handles.background, 'Parent', handles.focusWindow);
+set(handles.focusWindow,'Color',[0.1 0.1 0.1],'YColor',[1 1 1],'XColor',[1 1 1]);
+set(handles.focusWindow,'XTick',[]);
+set(handles.focusWindow,'YTick',[]);
 update_folders(hObject, eventdata, handles);
 handles = guidata(hObject);  % Get newest version of handles
 
@@ -195,15 +195,15 @@ set(handles.focusWindowSizePopup, 'Value', find(dropdown_items == handles.data.s
     
 guidata(hObject, handles);
 
-set(handles.axes7,'Color',[0.1 0.1 0.1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off','Clim',[0,1]);
-set(handles.axes7,'XTickLabel',[]);
-set(handles.axes7,'XTick',[]);
-set(handles.axes7,'YTick',[]);
+set(handles.contourWindow,'Color',[0.1 0.1 0.1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off','Clim',[0,1]);
+set(handles.contourWindow,'XTickLabel',[]);
+set(handles.contourWindow,'XTick',[]);
+set(handles.contourWindow,'YTick',[]);
 
-set(handles.axes3,'Color',[0.1 0.1 0.1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off','Clim',[0,1]);
-set(handles.axes3,'XTickLabel',[]);
-set(handles.axes3,'XTick',[]);
-set(handles.axes3,'YTick',[]);
+set(handles.waveformWindow,'Color',[0.1 0.1 0.1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off','Clim',[0,1]);
+set(handles.waveformWindow,'XTickLabel',[]);
+set(handles.waveformWindow,'XTick',[]);
+set(handles.waveformWindow,'YTick',[]);
 
 C = spatialPattern([1000,10000],-2);
 imagesc(C(1:900,1:10000),'Parent', handles.spectogramWindow);
@@ -310,7 +310,7 @@ handles.update_position_axes = 1;
 NextCall_Callback(hObject, eventdata, handles)
 
 % --- Executes during MAIN AXES CREATION
-function axes1_CreateFcn(hObject, eventdata, handles)
+function focusWindow_CreateFcn(hObject, eventdata, handles)
 
 function slide_focus(focus_offset, hObject, eventdata, handles)
 % Move the focus window one unit over
@@ -400,7 +400,7 @@ end
 
 % --- Executes on button press in rectangle.
 function rectangle_Callback(hObject, eventdata, handles)
-current_box = drawrectangle( 'Parent',handles.axes1,...
+current_box = drawrectangle( 'Parent',handles.focusWindow,...
                             'FaceAlpha',0,...
                             'LineWidth',1 );
 % Don't do anything if the new box is empty  
@@ -797,12 +797,6 @@ seconds = str2num(seconds{1});
 handles.data.settings.pageSize = seconds;
 guidata(hObject, handles);
 
-% --- Executes on mouse press over axes background.
-function spectogramWindow_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to spectogramWindow (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
 % --- Executes on selection change in spectogramScalePopup.
 function spectogramScalePopup_Callback(hObject, eventdata, handles)
 % hObject    handle to spectogramScalePopup (see GCBO)
@@ -937,3 +931,4 @@ function Untitled_2_Callback(hObject, eventdata, handles)
 % hObject    handle to Untitled_2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+

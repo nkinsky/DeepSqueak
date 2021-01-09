@@ -1,11 +1,11 @@
 function initialize_display(hObject, eventdata, handles)
 
 % Remove anything currently in the axes
-cla(handles.axes7);
+cla(handles.contourWindow);
 cla(handles.detectionAxes);
-cla(handles.axes1);
+cla(handles.focusWindow);
 cla(handles.spectogramWindow);
-cla(handles.axes3);
+cla(handles.waveformWindow);
 
 %
 handles.data.currentcall = 1;
@@ -22,12 +22,12 @@ handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + 
 %% Create plots for update_fig to update
 
 % Waveform
-handles.Waveform = line(handles.axes3,1,1,'Color',[.1 .3 .3]);
-handles.SNR = surface(handles.axes3,[],[],[],[],...
+handles.Waveform = line(handles.waveformWindow,1,1,'Color',[.1 .3 .3]);
+handles.SNR = surface(handles.waveformWindow,[],[],[],[],...
     'facecol','r',...
     'edgecol','interp',...
     'linew',2);
-set(handles.axes3,...
+set(handles.waveformWindow,...
     'YTickLabel',[],...
     'XTickLabel',[],...
     'XTick',[],...
@@ -39,25 +39,25 @@ set(handles.axes3,...
     'Colormap', parula);
 
 % Contour
-handles.ContourScatter = scatter(1:5,1:5,'LineWidth',1.5,'Parent',handles.axes7,'XDataSource','x','YDataSource','y');
-set(handles.axes7,'Color',[.1 .1 .1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off');
-set(handles.axes7,'YTickLabel',[]);
-set(handles.axes7,'XTickLabel',[]);
-set(handles.axes7,'XTick',[]);
-set(handles.axes7,'YTick',[]);
-handles.ContourLine = line(handles.axes7,[1,5],[1,5],'LineStyle','--','Color','y');
+handles.ContourScatter = scatter(1:5,1:5,'LineWidth',1.5,'Parent',handles.contourWindow,'XDataSource','x','YDataSource','y');
+set(handles.contourWindow,'Color',[.1 .1 .1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off');
+set(handles.contourWindow,'YTickLabel',[]);
+set(handles.contourWindow,'XTickLabel',[]);
+set(handles.contourWindow,'XTick',[]);
+set(handles.contourWindow,'YTick',[]);
+handles.ContourLine = line(handles.contourWindow,[1,5],[1,5],'LineStyle','--','Color','y');
 
 % Focus spectogram
-handles.spect = imagesc([],[],handles.background,'Parent', handles.axes1);
-cb=colorbar(handles.axes1);
+handles.spect = imagesc([],[],handles.background,'Parent', handles.focusWindow);
+cb=colorbar(handles.focusWindow);
 cb.Label.String = 'Amplitude';
 cb.Color = [1 1 1];
 cb.FontSize = 12;
-ylabel(handles.axes1,'Frequency (kHz)','Color','w');
-%xlabel(handles.axes1,'Time (s)','Color','w');
-set(handles.axes1,'Color',[.1 .1 .1]);
+ylabel(handles.focusWindow,'Frequency (kHz)','Color','w');
+%xlabel(handles.focusWindow,'Time (s)','Color','w');
+set(handles.focusWindow,'Color',[.1 .1 .1]);
 handles.box=rectangle('Position',[1 1 1 1],'Curvature',0.2,'EdgeColor','g',...
-    'LineWidth',3,'Parent', handles.axes1);
+    'LineWidth',3,'Parent', handles.focusWindow);
 
 % Epoch spectogram
 handles.epochSpect = imagesc([],[],handles.background,'Parent', handles.spectogramWindow);
@@ -71,7 +71,8 @@ set(handles.spectogramWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],
 set(handles.spectogramWindow,'Color',[.1 .1 .1]);
 set(handles.spectogramWindow,'Visible', 'on');
 set(handles.epochSpect,'Visible', 'on');
-set(handles.epochSpect,'ButtonDownFcn',@epoch_window_Callback);
+set(handles.epochSpect,'ButtonDownFcn', @(hObject,eventdata) mousePositionSelection_Callback(hObject,eventdata,guidata(hObject)));
+
 
 %Make the top scroll button visible
 set(handles.topRightButton, 'Visible', 'on');
@@ -84,7 +85,7 @@ set(handles.topLeftButton, 'Visible', 'on');
 handles.PageWindowRectangles = {};
 handles.FocusWindowRectangles = {};
 
-colormap(handles.axes1,handles.data.cmap);
+colormap(handles.focusWindow,handles.data.cmap);
 colormap(handles.spectogramWindow,handles.data.cmap);
 
 callPositionAxesXLim = xlim(handles.detectionAxes);

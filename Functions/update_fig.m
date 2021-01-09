@@ -43,7 +43,7 @@ handles = update_focus_display(handles);
 
 %% Plot the boxes on top of the detections
 handles = render_call_boxes(handles.spectogramWindow, handles,false,false);
-handles = render_call_boxes(handles.axes1, handles, true,false);
+handles = render_call_boxes(handles.focusWindow, handles, true,false);
 
 
 %% Position of the gray box in the page view

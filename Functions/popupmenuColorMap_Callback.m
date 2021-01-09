@@ -8,7 +8,6 @@ function popupmenuColorMap_Callback(hObject, eventdata, handles)
     else
         handles.data.cmap=feval(handles.data.cmapName{1,1},256);
     end
-    colormap(handles.axes1,handles.data.cmap);
-    %colormap(handles.axes4,handles.data.cmap);
+    colormap(handles.focusWindow,handles.data.cmap);
     colormap(handles.spectogramWindow,handles.data.cmap);
 end

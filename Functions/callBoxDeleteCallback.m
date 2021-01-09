@@ -27,10 +27,10 @@ end
 function choosedialog(rectangle,handles)
 
 hObject = handles.figure1;
-axes_position = get(handles.axes1, 'Position');
+axes_position = get(handles.focusWindow, 'Position');
 
-axes_x_lim = xlim(handles.axes1);
-axes_y_lim = ylim(handles.axes1);
+axes_x_lim = xlim(handles.focusWindow);
+axes_y_lim = ylim(handles.focusWindow);
 position = get(rectangle, 'Position');
 tag = get(rectangle, 'Tag');
 

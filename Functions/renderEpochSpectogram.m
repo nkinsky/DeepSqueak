@@ -38,9 +38,9 @@ set_tick_timestamps(handles.spectogramWindow, false);
 
 
 %% Plot Spectrogram in the focus view
-% set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
-set(handles.axes1,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',clim)
-% set(handles.spect,'Parent',handles.axes1);
+% set(handles.focusWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',[0 get_spectogram_max(hObject,handles)]);
+set(handles.focusWindow,'YDir', 'normal','YColor',[1 1 1],'XColor',[1 1 1],'Clim',clim)
+% set(handles.spect,'Parent',handles.focusWindow);
 % set(handles.spect,'CData',zoomed_s,'XData', zoomed_t,'YData',zoomed_f/1000);
 
 
