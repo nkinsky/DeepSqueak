@@ -15,6 +15,9 @@ handles.data.windowposition = 0;
 handles.data.lastWindowPosition = -1;
 handles.update_position_axes = 1;
     
+if handles.data.settings.LowFreq >= handles.data.audiodata.SampleRate/2000
+    handles.data.settings.LowFreq = 0;
+end
 
 %% Create plots for update_fig to update
 

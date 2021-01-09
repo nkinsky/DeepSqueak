@@ -17,7 +17,7 @@ prompt = struct(...
     'HighFreq', 'High frequency cutoff (kHz):',...
     'type', 'Spectrogram Units:',...
     'windowsize', 'window size (s):',...
-    'noverlap', 'overlap (s):',...
+    'noverlap', 'overlap (%):',...
     'nfft', 'nfft (s):');
 
 
@@ -96,7 +96,7 @@ text('Parent', AxesHandle,...
     'HorizontalAlignment', 'right',...
     'VerticalAlignment', 'middle');
 
-ui.noverlap = uicontrol('Style', 'Edit', 'String', values.spect.noverlap, ...
+ui.noverlap = uicontrol('Style', 'Edit', 'String', 100 * values.spect.noverlap ./ values.spect.windowsize, ...
     'Parent',hfig,'Units','Normalized', ...
     'Position', [.65, .38, .25, .06]);
 text('Parent', AxesHandle,...
@@ -114,6 +114,10 @@ text('Parent', AxesHandle,...
     'HorizontalAlignment', 'right',...
     'VerticalAlignment', 'middle');
 
+autoscale = uicontrol('Style', 'pushbutton', 'String', 'Auto window size', ...
+    'Parent',hfig,'Units','Normalized', ...
+    'Position', [.05, .31, .3, .06],...
+    'Callback', @autoScale);
 
 %%
 ok_button = uicontrol('Style', 'pushbutton', 'String', 'OK', ...
@@ -163,16 +167,17 @@ hfig.Visible = 'on';
             return
         end
         
-        if newValues.noverlap >= newValues.windowsize
-            errordlg('Spectrogram overlap must be less than the window size')
+        if newValues.noverlap >= 95
+            errordlg('Spectrogram overlap must be less than 95%')
             return
         end
+        
         
         handles.data.settings.LowFreq = newValues.LowFreq;
         handles.data.settings.HighFreq = newValues.HighFreq;
         handles.data.settings.spect.type = ui.type.String{ui.type.Value};
         handles.data.settings.spect.windowsize = newValues.windowsize;
-        handles.data.settings.spect.noverlap = newValues.noverlap;
+        handles.data.settings.spect.noverlap = newValues.noverlap * newValues.windowsize / 100;
         handles.data.settings.spect.nfft = newValues.nfft;
         
         delete(hfig)
@@ -189,6 +194,22 @@ hfig.Visible = 'on';
     function cancelfun(~,~)
         % uiresume
         delete(hfig)
+    end
+
+    function autoScale(~,~)
+        % Optimize the window size so that the pixels are square
+        yRange(1) = sscanf(ui.LowFreq.String,'%f', 1);
+        yRange(2) = sscanf(ui.HighFreq.String,'%f', 1);
+        yRange(2) = min(yRange(2), handles.data.audiodata.SampleRate / 2000);
+        yRange = yRange(2) - yRange(1);
+        % yRange = handles.focusWindow.YLim(2) - handles.focusWindow.YLim(1);
+        xRange = handles.focusWindow.XLim(2) - handles.focusWindow.XLim(1);
+        noverlap = sscanf(ui.noverlap.String,'%f', 1) / 100;
+        optimalWindow = sqrt(xRange/(2000*yRange));
+        optimalWindow = optimalWindow + optimalWindow.*noverlap;
+        ui.windowsize.String = num2str(optimalWindow, 3);
+        ui.nfft.String = num2str(optimalWindow, 3);
+        
     end
 
 end

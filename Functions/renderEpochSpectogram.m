@@ -6,7 +6,6 @@ windowsize = round(handles.data.audiodata.SampleRate * handles.data.settings.spe
 noverlap = round(handles.data.audiodata.SampleRate * handles.data.settings.spect.noverlap);
 nfft = round(handles.data.audiodata.SampleRate * handles.data.settings.spect.nfft);
 
-
 %% Get audio within the page range, padded by focus window size
 window_start = max(handles.data.windowposition - handles.data.settings.focus_window_size/2, 0);
 window_stop = handles.data.windowposition + handles.data.settings.pageSize + handles.data.settings.focus_window_size/2;
@@ -20,12 +19,12 @@ s_display = scaleSpectogram(s, handles.data.settings.spect.type, windowsize, han
 
 
 %% Find the color scale limits
-clim = prctile(s_display(20:20:end-20, 1:20:end),[10,90],'all');
-clim = clim + range(clim) * [-.1; 1];
+clim = prctile(s_display(20:20:end-20, 1:20:end),[10,95],'all');
+clim = clim + range(clim) * [-.1; 2];
+% clim = prctile(s_display(20:20:end-20, 1:20:end),[20,30,95],'all');
+% clim = [clim(1), 2*clim(3) - clim(2)]
 
 %% Plot Spectrogram in the page view
-%     set(handles.epochSpect,'Parent',handles.spectogramWindow);
-%     set(handles.epochSpect,'CData',handles.background);
 set(handles.spectogramWindow,...
     'Xlim', [handles.data.windowposition, handles.data.windowposition + handles.data.settings.pageSize],...
     'Ylim',[handles.data.settings.LowFreq, min(handles.data.settings.HighFreq, handles.data.audiodata.SampleRate/2000)]);
