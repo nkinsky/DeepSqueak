@@ -26,19 +26,30 @@ if all_calls
     min_call_render_difference = 2*handles.data.audiodata.Duration / (screen_size(3));
     calls_to_plot = diff([0;CallTime]) > min_call_render_difference;
     
-
-
-    for accepted = 0:1
-        xdata = CallTime(calls_to_plot & handles.data.calls.Accept == accepted);
-        ydata = [zeros(size(xdata)), ones(size(xdata))];
-        if any(xdata)
-            line([xdata,xdata]', ydata','Parent', handles.detectionAxes,'Color',[1,0,0] + accepted.*[-1,.5,0], 'PickableParts','none');
-        end
-    end
+    % Plot the little green lines
+%     for accepted = 0:1
+%         xdata = CallTime(calls_to_plot & handles.data.calls.Accept == accepted);
+%         if any(xdata)
+%             xdata = repelem(xdata,2,1);
+%             % This lets us make the plot with a single line, since the vertical
+%             % lines are connected, but above the range of the plot
+%             % x = [x(1) x(1) x(2) x(2) x(3) x(3) x(4) x(4) x(5) x(5) ...]
+%             % y = [0    1    1    0    0    1    1    0    0    1    ...]
+%             ydata = zeros(size(xdata)) - 1;
+%             ydata(2:4:end) = 2;
+%             ydata(3:4:end) = 2;
+%             line(xdata, ydata,'Parent', handles.detectionAxes,'Color',[1,0,0] + accepted.*[-1,.5,0], 'PickableParts','none');
+%         end
+%     end
     
+    % Plot kernal densityp
     if any(handles.data.calls.Accept)
-        [f,xi] = ksdensity(CallTime(handles.data.calls.Accept == true), linspace(0,handles.data.audiodata.Duration,200), 'Bandwidth', 1);
-        line(xi,rescale(f),'Parent', handles.detectionAxes,'Color',[0,1,0], 'PickableParts','none');
+        [f,xi] = ksdensity(CallTime(handles.data.calls.Accept == true), linspace(0,handles.data.audiodata.Duration,300),...
+            'Bandwidth', handles.data.audiodata.Duration / 300,...
+            'Kernel', 'normal');
+        f(1) = 0;
+        f(end) = 0;
+        patch(handles.detectionAxes, xi, rescale(f,.05,.95), [0,.6,0], 'PickableParts', 'none');
     end
     
     % Initialize the timestamp text and current call line

@@ -21,8 +21,7 @@ s_display = scaleSpectogram(s, handles.data.settings.spect.type, windowsize, han
 
 %% Find the color scale limits
 clim = prctile(s_display(20:20:end-20, 1:20:end),[10,90],'all');
-clim = clim + range(clim) * [-.1; 3];
-
+clim = clim + range(clim) * [-.1; 1];
 
 %% Plot Spectrogram in the page view
 %     set(handles.epochSpect,'Parent',handles.spectogramWindow);

@@ -36,7 +36,7 @@ set(handles.waveformWindow,...
     'Colormap', parula);
 
 % Contour
-handles.ContourScatter = scatter(1:5,1:5,'LineWidth',1.5,'Parent',handles.contourWindow,'XDataSource','x','YDataSource','y');
+handles.ContourScatter = scatter(1:5,1:5, 'filled', 'LineWidth',1.5,'Parent',handles.contourWindow,'XDataSource','x','YDataSource','y');
 set(handles.contourWindow,'Color',[.1 .1 .1],'YColor',[1 1 1],'XColor',[1 1 1],'Box','off');
 set(handles.contourWindow,'YTickLabel',[]);
 set(handles.contourWindow,'XTickLabel',[]);
@@ -53,8 +53,7 @@ cb.FontSize = 12;
 ylabel(handles.focusWindow,'Frequency (kHz)','Color','w');
 %xlabel(handles.focusWindow,'Time (s)','Color','w');
 set(handles.focusWindow,'Color',[.1 .1 .1]);
-handles.box=rectangle('Position',[1 1 1 1],'Curvature',0.2,'EdgeColor','g',...
-    'LineWidth',3,'Parent', handles.focusWindow);
+
 
 % Epoch spectogram
 handles.epochSpect = imagesc([],[],handles.background,'Parent', handles.spectogramWindow);

@@ -19,7 +19,7 @@ handles.data.audiodata = [];
 [handles.data.calls, handles.data.audiodata] = loadCallfile(fullfile(handles.detectionfiles(handles.current_file_id).folder,  handles.current_detection_file), handles);
 
 % Position of the focus window to the first call in the file
-handles.data.focusCenter = handles.data.calls.Box(handles.data.currentcall,1) + handles.data.calls.Box(handles.data.currentcall,3)/2;
+handles.data.focusCenter = handles.data.calls.Box(1,1) + handles.data.calls.Box(1,3)/2;
 
 initialize_display(hObject, eventdata, handles);
 close(h);

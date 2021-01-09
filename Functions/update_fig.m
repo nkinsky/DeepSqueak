@@ -41,10 +41,11 @@ end
 
 handles = update_focus_display(handles);
 
-
+% profile on
 %% Plot Call Position (updates the little bar with the green lines)
 handles = render_call_position(handles, handles.update_position_axes);
-
+% profile off
+% profview
 
 %% Plot the boxes on top of the detections
 handles = render_call_boxes(handles.spectogramWindow, handles,false,false);
