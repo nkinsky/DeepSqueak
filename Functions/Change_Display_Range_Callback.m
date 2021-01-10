@@ -181,8 +181,19 @@ hfig.Visible = 'on';
         handles.data.settings.spect.nfft = newValues.nfft;
         
         delete(hfig)
+        
+        
         handles.data.saveSettings();
-        update_fig(hObject, eventdata, handles, true);
+        if ~isempty(handles.data.audiodata)
+            update_fig(hObject, eventdata, handles, true);
+            % Update the color limits because changing from amplitude to
+            % power would mess with them
+            handles.data.clim = prctile(handles.data.page_spect.s_display(20:10:end-20, 1:20:end),[10,90], 'all')';
+            clim = handles.data.clim + range(handles.data.clim) * [0, 1] * handles.data.settings.spectrogramContrast;
+            set(handles.spectogramWindow,'Clim',clim)
+            set(handles.focusWindow,'Clim',clim)
+        end
+        guidata(hObject, handles);
         
     end
 
@@ -209,7 +220,6 @@ hfig.Visible = 'on';
         optimalWindow = optimalWindow + optimalWindow.*noverlap;
         ui.windowsize.String = num2str(optimalWindow, 3);
         ui.nfft.String = num2str(optimalWindow, 3);
-        
     end
 
 end

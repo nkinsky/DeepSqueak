@@ -17,6 +17,7 @@ classdef squeakData < handle
         focusCenter = 0; % center of the current focus window
         pageSizes = [2, 3, 5, 10, 30] % List of page size values in the dropdown box
         focusSizes = [.25, .5, 1, 2, 5] % List of focus size values in the dropdown box
+        clim = [0 1];
     end
     properties (Access = private)
         AudioStartSample = 0;
@@ -34,7 +35,7 @@ classdef squeakData < handle
             obj.defaultSettings.audiofolder = fullfile(obj.squeakfolder, 'Audio/');
             obj.defaultSettings.detectionSettings = {'0' '6' '.1' '100' '18' '0' '1'};
             obj.defaultSettings.playback_rate = 0.05;
-            obj.defaultSettings.LowFreq = 15;
+            obj.defaultSettings.LowFreq = 0;
             obj.defaultSettings.HighFreq = 115;
             obj.defaultSettings.AmplitudeThreshold = 0;
             obj.defaultSettings.EntropyThreshold = 0.3;
@@ -42,6 +43,7 @@ classdef squeakData < handle
             obj.defaultSettings.pageSize = 3; % Size of page view in seconds
             obj.defaultSettings.spectogram_ticks = 11;
             obj.defaultSettings.focus_window_size = 0.5;
+            obj.defaultSettings.spectrogramContrast = 3;
             % Spectrogram fft settings in seconds
             obj.defaultSettings.spect.windowsize = 0.0032;
             obj.defaultSettings.spect.noverlap = 0.0016;

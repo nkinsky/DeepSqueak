@@ -97,4 +97,13 @@ handles.currentWindowRectangle = rectangle(handles.spectogramWindow,...
     'PickableParts', 'none');
 
 update_fig(hObject, eventdata, handles);
+handles = guidata(hObject);
+
+%% Find the color scale limits
+handles.data.clim = prctile(handles.data.page_spect.s_display(20:10:end-20, 1:20:end),[10,90], 'all')';
+clim = handles.data.clim + range(handles.data.clim) * [0, 1] * handles.data.settings.spectrogramContrast;
+set(handles.spectogramWindow,'Clim',clim)
+set(handles.focusWindow,'Clim',clim)
+% guidata(hObject, handles);
+
 

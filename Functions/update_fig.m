@@ -2,10 +2,17 @@ function update_fig(hObject, eventdata, handles, force_render_page)
 if nargin < 4
     force_render_page = false;
 end
-
-set(handles.hFig, 'pointer', 'watch')
-% drawnow nocallbacks
-
+% Okay, so this is pretty annoying, but the GUI is a bit slower to update
+% when a button is selected rather than the figure. I don't know the best
+% way to fix this, but disabling and enabling the button seems to return
+% focus to the main figure window
+if strcmp(get(handles.figure1.CurrentObject,'type'), 'uicontrol')
+    set(handles.figure1.CurrentObject, 'Enable', 'off');
+    drawnow nocallbacks
+    set(handles.figure1.CurrentObject, 'Enable', 'on');
+    handles.figure1.CurrentObject = handles.figure1;
+end
+drawnow nocallbacks
 
 
 %% Update focus position
@@ -14,7 +21,6 @@ handles.current_focus_position = [
     0
     handles.data.settings.focus_window_size
     0];
-guidata(hObject, handles);
 
 
 %% Update the position of the page window by using focus position
@@ -24,7 +30,7 @@ handles.data.windowposition = jumps*handles.data.settings.pageSize;
 
 
 %% Position of the gray box in the page view
-spectogram_axes_ylim = ylim(handles.spectogramWindow);
+spectogram_axes_ylim = ylim(handles.focusWindow);
 handles.currentWindowRectangle.Position = [
     handles.current_focus_position(1)
     spectogram_axes_ylim(1)
@@ -35,8 +41,7 @@ handles.currentWindowRectangle.Position = [
 
 %% Render the page view if the page changed
 if handles.data.lastWindowPosition ~= handles.data.windowposition || force_render_page
-    renderEpochSpectogram(hObject,handles);
-    handles = guidata(hObject);
+    handles = renderEpochSpectogram(hObject,handles);
 end
 
 handles = update_focus_display(handles);

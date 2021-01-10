@@ -225,25 +225,15 @@ varargout{1} = handles.output;
 % --- Executes on button press in PlayCall.
 function PlayCall_Callback(hObject, eventdata, handles)
 % Play the sound within the boxs
-% audio =  handles.data.calls.Audio{handles.data.currentcall};
 audio = handles.data.AudioSamples(...
     handles.data.calls.Box(handles.data.currentcall, 1),...
     handles.data.calls.Box(handles.data.currentcall, 1) + handles.data.calls.Box(handles.data.currentcall, 3));
-
 playbackRate = handles.data.audiodata.SampleRate * handles.data.settings.playback_rate; % set playback rate
-
 % Bandpass Filter
 % audio = bandpass(audio,[handles.data.calls.Box(handles.data.currentcall, 2), handles.data.calls.Box(handles.data.currentcall, 2) + handles.data.calls.Box(handles.data.currentcall, 4)] * 1000,handles.data.audiodata.Samplerate));
 % paddedsound = [zeros(3125,1); audio; zeros(3125,1)];
-
 soundsc(audio,playbackRate);
 
-%Set the default sizes for epoch and focus windows
-% handles.data.settings.focus_window_size = 0.5;
-% handles.data.settings.pageSize = 2;
-% handles.data.settings.spectogram_ticks = 11;
-
-% guidata(hObject, handles);
 
 % --- Executes on button press in NextCall.
 function NextCall_Callback(hObject, eventdata, handles)
@@ -922,3 +912,28 @@ function Untitled_2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+
+
+% --- Executes on button press in invert_cmap.
+function invert_cmap_Callback(hObject, eventdata, handles)
+colormap(handles.spectogramWindow, flipud(colormap(handles.spectogramWindow)))
+colormap(handles.focusWindow, flipud(colormap(handles.focusWindow)))
+
+
+% --- If Enable == 'on', executes on mouse press in 5 pixel border.
+% --- Otherwise, executes on mouse press in 5 pixel border or over contrast_minus.
+function contrast_minus_Callback(hObject, eventdata, handles)
+handles.data.settings.spectrogramContrast = handles.data.settings.spectrogramContrast * 1.25;
+clim = handles.data.clim + range(handles.data.clim) * [0, 1] * handles.data.settings.spectrogramContrast;
+set(handles.spectogramWindow,'Clim',clim)
+set(handles.focusWindow,'Clim',clim)
+% guidata(hObject, handles);
+
+
+% --- Executes on button press in contrast_plus.
+function contrast_plus_Callback(hObject, eventdata, handles)
+handles.data.settings.spectrogramContrast = handles.data.settings.spectrogramContrast * .8;
+clim = handles.data.clim + range(handles.data.clim) * [0, 1] * handles.data.settings.spectrogramContrast;
+set(handles.spectogramWindow,'Clim',clim)
+set(handles.focusWindow,'Clim',clim)
+% guidata(hObject.Parent, handles);
