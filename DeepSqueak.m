@@ -927,7 +927,8 @@ handles.data.settings.spectrogramContrast = handles.data.settings.spectrogramCon
 clim = handles.data.clim + range(handles.data.clim) * [0, 1] * handles.data.settings.spectrogramContrast;
 set(handles.spectogramWindow,'Clim',clim)
 set(handles.focusWindow,'Clim',clim)
-% guidata(hObject, handles);
+handles.data.saveSettings();
+guidata(hObject, handles);
 
 
 % --- Executes on button press in contrast_plus.
@@ -936,4 +937,5 @@ handles.data.settings.spectrogramContrast = handles.data.settings.spectrogramCon
 clim = handles.data.clim + range(handles.data.clim) * [0, 1] * handles.data.settings.spectrogramContrast;
 set(handles.spectogramWindow,'Clim',clim)
 set(handles.focusWindow,'Clim',clim)
-% guidata(hObject.Parent, handles);
+handles.data.saveSettings();
+guidata(hObject.Parent, handles);
