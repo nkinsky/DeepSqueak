@@ -28,6 +28,9 @@ classdef squeakData < handle
     
     methods
         function obj = squeakData(squeakfolder)
+            if nargin < 1
+                squeakfolder = [];
+            end
             obj.squeakfolder = squeakfolder;
             obj.defaultSettings = struct();
             obj.defaultSettings.detectionfolder = fullfile(obj.squeakfolder, 'Detections/');

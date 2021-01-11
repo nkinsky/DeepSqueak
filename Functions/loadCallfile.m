@@ -77,5 +77,7 @@ if nargout > 1
         disp('Saving call file with updated audio')
         save(filename, 'audiodata', '-append');
     end
-%     audiodata.samples = audioread(audiodata.Filename);
+    if audiodata.NumChannels > 1
+        warning('Audio file contains more than one channel. Use channel 1...')
+    end
 end
