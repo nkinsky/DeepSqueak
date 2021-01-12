@@ -21,7 +21,7 @@ noverlap = spectSettings(2) * spectSettings(1) / 100;
 nfft = spectSettings(3);
 bout = spectSettings(4);
 repeats = spectSettings(5)+1;
-AmplitudeRange = [0.75, 1.25];
+AmplitudeRange = [-.7, .8];
 StretchRange = [0.75, 1.25];
 
 
@@ -106,7 +106,7 @@ if replicatenumber > 1
     AmplitudeFactor = range(AmplitudeRange).*rand() + AmplitudeRange(1);
     StretchFactor = range(StretchRange).*rand() + StretchRange(1);
 else
-    AmplitudeFactor = 1;
+    AmplitudeFactor = 0;
     StretchFactor = 1;
 end
 
@@ -122,13 +122,15 @@ im = log10(p);
 im = (im - mean(im, 'all')) * std(im, [],'all');
 % hmatch = normpdf(linspace(0,1,1000),0,.2) + normpdf(linspace(0,1,1000),.8,.2)*.1; 
 % clim = prctile(im,[30, 99],'all')
-im = rescale(im * AmplitudeFactor, 'InputMin',-1 ,'InputMax', 5);
-% im = histeq(im, rescale(hmatch));
-% 
+
+im = rescale(im + AmplitudeFactor * im.^3 ./ (im.^2+2), 'InputMin',-1 ,'InputMax', 5);
+
 % figure
-% plot( rescale(hmatch))
-% 
-% histogram(im, 200)
+% histogram(im + AmplitudeFactor * im.^3, 0:.01:1)
+% imshow(im)
+% x = linspace(-5,5,100)
+% plot(x,  x + .5*x.^3 ./ (x.^2 + 1))
+
 
 
 maxfreq = find(fr < freqCutoff,1, 'last');
