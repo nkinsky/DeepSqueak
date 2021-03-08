@@ -39,6 +39,7 @@ elseif exist(handles.data.settings.audiofolder,'dir')==0
 else
     handles.audiofiles=[
         dir([handles.data.settings.audiofolder '/*.wav*'])
+        dir([handles.data.settings.audiofolder '/*.WAV*'])
         dir([handles.data.settings.audiofolder '/*.UVD*'])
         dir([handles.data.settings.audiofolder '/*.wmf*'])
         dir([handles.data.settings.audiofolder '/*.flac*'])
